@@ -1,3 +1,5 @@
+# ENGINEERING SAMPLE!
+# 下面的代碼醜得很，不能見人的 QAQ!
 # ENGG1340 Group140
 ### Group Members
 
