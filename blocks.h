@@ -18,5 +18,6 @@ using namespace std;
 
 void getBlocksReady(string blocks[BLOCK_SHAPE_COUNT]);
 int rotateBlock(int i, int mode);
+string rotateBlock(int i, string blockContent);
 
 #endif

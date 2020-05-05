@@ -6,6 +6,13 @@
 #include <cstdlib>
 #include <string>
 
+void clearOldBlocks(WINDOW * window, int posx, int posy)
+{
+	string emptyline = "                ";
+	for (int i = 0; i < 4; ++i)
+		mvwprintw(window, i+posy, posx, emptyline.substr(4*i,4).c_str());
+}
+
 int main()
 {
 	srand(time(0)); // Initialize random seed
@@ -58,35 +65,40 @@ int main()
 	// Spawn block
 	string blocks[BLOCK_SHAPE_COUNT];
 	getBlocksReady(blocks);
-
-	for (int i = 0; i < 4; ++i)
-	{
-		mvwprintw(twin, i+1, (xmax-4)/2, blocks[1].substr(0,4).c_str());
-	}
-	mvwprintw(twin, 1, (xmax-4)/2, blocks[1].substr(0,4).c_str());
-	mvwprintw(twin, 2, (xmax-4)/2, blocks[1].substr(4,4).c_str());
-	mvwprintw(twin, 3, (xmax-4)/2, blocks[1].substr(8,4).c_str());
-	mvwprintw(twin, 4, (xmax-4)/2, blocks[1].substr(12,4).c_str());
-	wrefresh(twin);
+	string currentBlock = blocks[0];
+	int rotation = 0;
+	int posx = (xmax-4)/2, posy = 1;
 
 	while (true)
 	{
 		char x = getch();
+		clearOldBlocks(twin, posx, posy);
 		switch (x)
 		{
 			case W_KEY:
+				rotation = (rotation + 1) % 4;
+				mvwprintw(iwin, 15, (xmax-1)/2, to_string(rotation).c_str());
 				mvwprintw(iwin, 14, (xmax-1)/2, "W");
 				break;
 			case A_KEY:
+				if (posx > 1)
+					posx -= 1;
 				mvwprintw(iwin, 14, (xmax-1)/2, "A");
 				break;
 			case S_KEY:
+				if (posy < TWIN_HEIGHT-5)
+					posy += 1;
 				mvwprintw(iwin, 14, (xmax-1)/2, "S");
 				break;
 			case D_KEY:
+				if (posx < TWIN_WIDTH-5)
+					posx += 1;
 				mvwprintw(iwin, 14, (xmax-1)/2, "D");
 				break;								
 		}
+		for (int i = 0; i < 4; ++i)
+			mvwprintw(twin, i+posy, posx, rotateBlock(rotation, currentBlock).substr(4*i,4).c_str());
+		wrefresh(twin);
 		wrefresh(iwin);
 	}
 
