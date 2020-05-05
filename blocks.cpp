@@ -74,8 +74,3 @@ void printBlock()
                 cout << endl;
         }
 }
-
-int main()
-{
-        printBlock();
-}

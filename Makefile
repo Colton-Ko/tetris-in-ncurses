@@ -1,6 +1,6 @@
 controller:
 	rm -rfv *.o
-	g++ controller.cpp -o controller.o -lncurses && ./controller.o
+	g++ controller.cpp blocks.cpp -o controller.o -lncurses && ./controller.o
 	stty sane
 	clear
 
