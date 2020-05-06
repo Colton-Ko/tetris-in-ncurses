@@ -1,10 +1,19 @@
+#include "tetris/blocks.h"
+#include "tetris/controller.h"
+#include "tetris/game.h"
+#include "tetris/debug.h"
+#include "tetris/options.h"
+#include "tetris/constants.h"
+#include "tetris/types.h"
+
 #include <ncurses.h>
 #include <string>
-#include "tetris/blocks.h"
 #include <iostream>
-
+#include <vector>
+#include <algorithm>
 
 using namespace std;
+
 
 void getBlocksReady(string blocks[BLOCK_SHAPE_COUNT])
 {
@@ -51,30 +60,6 @@ int rotateBlock(int i, int mode)
 	return i;
 }
 
-
-
-// test function for rotation
-void printBlock()
-{
-	string blocks[7];
-	getBlocksReady(blocks);
-	for (int i = 0; i < BLOCK_SHAPE_COUNT; ++i)
-	{
-		for ( int j = 0; j < BLOCK_WIDTH_SQR; ++j)
-		{
-			if (isprint(blocks[i][j]))
-			{
-				cout << blocks[i][rotateBlock(j,0)];
-			}
-			if ((j+1)%4 == 0)
-			{
-				cout << endl;
-			}
-		}
-		cout << endl;
-	}
-}
-
 string rotateBlock(int i, string blockContent)
 {
 	string output = "";
@@ -87,18 +72,83 @@ string rotateBlock(int i, string blockContent)
 }
 
 // Converts the shapeString to integer array to be embedded
-void shapeStringToArray(string shapeString, int iteration, int block[BLOCK_WIDTH][BLOCK_WIDTH])
+vector<vector<int>> shapeStringToArray(string shapeString, int blockNum, int ysize, int xsize)
 {
-	for (int i = 0; i < BLOCK_WIDTH_SQR; ++i)
+	vector<vector<int>> blockMatrix;
+	vector<int> row;
+    cout << ysize << " " << xsize << endl;
+	for (int i = 0; i < ysize; ++i)
 	{
-		switch(shapeString[i])
+		for (int j = 0; j < xsize; ++j)
 		{
-			case '.':
-				block[i/4][i%4] = 0;
-				break;
-			case '#':
-				block[i/4][i%4] = iteration;
-				break;
+				switch(shapeString[4*i+j])
+				{
+					case '.':							// Empty space
+						row.push_back(0);
+						break;
+					case '#':						
+						row.push_back(blockNum);		// Solid block
+						break;
+				}
 		}
+		blockMatrix.push_back(row);
 	}
+	return blockMatrix;
+}
+
+block blockStringToBlockObj(string shapeString)
+{
+    int xsize = BLOCK_WIDTH, ysize = BLOCK_WIDTH;
+    string temp = "";               //  Temporary string for checking
+    string output = shapeString;    //  Scratch pad string
+
+    for (int j = 0; j < BLOCK_WIDTH; ++j)
+    {
+        for (int i = 0; i < BLOCK_WIDTH; ++i)
+        {
+            temp.push_back(shapeString[4*i+j]);
+        }
+        if (temp == BLOCK_EMPTY_LINE)
+        {
+            xsize -= 1;
+            // Mark chars to be deleted with DELETE CHAR
+            for (size_t i = 0; i < BLOCK_WIDTH; ++i)
+            {
+                output[4*i+j] = DELETE_CHAR;
+            }
+        }
+        temp = "";
+    }
+
+    // This code is from https://stackoverflow.com/questions/20326356/how-to-remove-all-the-occurrences-of-a-char-in-c-string
+    output.erase(remove(output.begin(), output.end(), DELETE_CHAR), output.end());
+
+    temp = "";
+    for (int i = 0; i < BLOCK_WIDTH; ++i)
+    {
+        for (int j = 0; j < xsize; ++j)
+        {
+            temp.push_back(shapeString[4*i+j]);
+        }
+        if (temp == BLOCK_EMPTY_LINE)
+        {
+            ysize -= 1;
+            // Mark these chars to be deleted with DELETE CHAR
+            for (int j = 0; j < xsize; ++j)
+            {
+                output[4*i+j] = DELETE_CHAR;
+            }
+        }
+        temp = "";
+    }
+
+    // This code is from https://stackoverflow.com/questions/20326356/how-to-remove-all-the-occurrences-of-a-char-in-c-string
+    output.erase(remove(output.begin(), output.end(), DELETE_CHAR), output.end());
+
+    block result;
+    result.ysize = ysize;
+    result.xsize = xsize;
+    result.content = output;
+
+    return result;
 }

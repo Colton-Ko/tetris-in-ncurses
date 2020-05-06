@@ -3,11 +3,14 @@
 #include "tetris/game.h"
 #include "tetris/debug.h"
 #include "tetris/options.h"
+#include "tetris/constants.h"
+#include "tetris/types.h"
 
 #include <ncurses.h>
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
+#include <vector>
 #include <list>
 #include <string>
 
@@ -54,15 +57,16 @@ string gameboardToString(int board[BOARD_HEIGHT][BOARD_WIDTH], int xmax)
         return output;
 }
 
-void addShapeToGameBoard(int blockMatrix[BLOCK_WIDTH][BLOCK_WIDTH], int ysize, int xsize, int posy, int posx, int board[BOARD_HEIGHT][BOARD_WIDTH])
+
+void addShapeToGameBoard(vector<vector<int>> blockMatrix, int posy, int posx, int board[BOARD_HEIGHT][BOARD_WIDTH])
 {
-        for (int i = 0; i < ysize; ++i)
-        {
-                for (int j = 0; j < xsize; ++j)
-                {
-                        board[posy+i][posx+j] = blockMatrix[i][j];
-                }
-        }
+	for (int i = 0; i < blockMatrix.size(); i++)
+	{
+		for (int j = 0; j < blockMatrix[i].size(); j++)
+		{
+			board[posy+i][posx+j] = blockMatrix[i][j];
+		}
+	}
 }
 
 void clearShapeOnBoard(int blockNum, int board[BOARD_HEIGHT][BOARD_WIDTH])

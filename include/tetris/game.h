@@ -2,18 +2,17 @@
 #define GAME_H
 
 #include <string>
-#include "tetris/controller.h"
-#include "tetris/blocks.h"
+#include <vector>
+#include "tetris/constants.h"
+#include "tetris/types.h"
 
 using namespace std;
-
-#define ROTATIONS 4
 
 string spawnNewBlock();
 int randomInteger(int max);
 void generateGameBoard(int board[BOARD_HEIGHT][BOARD_WIDTH]);
 string gameboardToString(int board[BOARD_HEIGHT][BOARD_WIDTH], int xmax);
-void addShapeToGameBoard(int block[BLOCK_WIDTH][BLOCK_WIDTH], int ysize, int xsize, int posy, int posx, int board[BOARD_HEIGHT][BOARD_WIDTH]);
-void shapeStringToArray(string shapeString, int iteration, int block[BLOCK_WIDTH][BLOCK_WIDTH]);
+void addShapeToGameBoard(vector<vector<int>> blockMatrix, int posy, int posx, int board[BOARD_HEIGHT][BOARD_WIDTH]);
+vector<vector<int>> shapeStringToArray(string shapeString, int blockNum, int ysize, int xsize);
 void clearShapeOnBoard(int blockNum, int board[BOARD_HEIGHT][BOARD_WIDTH]);
 #endif

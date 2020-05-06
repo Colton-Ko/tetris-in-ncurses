@@ -1,6 +1,12 @@
-#include <ncurses.h>
-#include "tetris/game.h"
+#include "tetris/blocks.h"
 #include "tetris/controller.h"
+#include "tetris/game.h"
+#include "tetris/debug.h"
+#include "tetris/options.h"
+#include "tetris/constants.h"
+#include "tetris/types.h"
+
+#include <ncurses.h>
 #include <string>
 #include <sstream>
 using namespace std;

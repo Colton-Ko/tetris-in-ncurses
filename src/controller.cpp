@@ -3,25 +3,28 @@
 #include "tetris/game.h"
 #include "tetris/debug.h"
 #include "tetris/options.h"
+#include "tetris/constants.h"
+#include "tetris/types.h"
+
 #include <ncurses.h>
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
 #include <string>
-
-void clearOldBlocks(WINDOW * window, int posx, int posy)
-{
-	string emptyline = "                ";
-	for (int i = 0; i < 4; ++i)
-		mvwprintw(window, i+posy, posx, emptyline
-			.substr(4*i,4).c_str());
-}
+#include <vector>
 
 void drawBox(WINDOW * win)
 {
 	box(win, 0, 0);						// Draw outline box
 	wrefresh(win);
 }
+
+void clearOldBlocks(WINDOW * window, int posx, int posy)
+{
+	wclear(window);
+	drawBox(window);
+}
+
 
 void exitOnSmallTerminal(int ymax, int xmax)
 {
@@ -59,26 +62,36 @@ void printInstructionWindow(WINDOW * iwin, int xmax)
 	wrefresh(iwin);
 }
 
-void drawBlock(WINDOW * twin, int posy, int posx, string currentBlock, int rotation)
+
+void drawBlockMatrix(WINDOW * twin, int posy, int posx, vector<vector<int>> blockMatrix)
 {
-	for (int i = 0; i < 4; ++i)
-			mvwprintw(twin, i+posy, posx, 		
-			rotateBlock(rotation, currentBlock)
-			.substr(4*i,4).c_str());
+	for (int i = 0; i < blockMatrix.size(); i++)			// For each ysize
+	{
+		for (int j = 0; j < blockMatrix[i].size(); j++)
+		{
+			if (blockMatrix[i][j])
+			{
+				wattron(twin, 0);
+				mvwprintw(twin, i+posy, posx+j, "##");
+				wattroff(twin, 0);
+			}
+				
+		}
+	}
 
 	wrefresh(twin);
 }
 
 void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 {	
+	init_pair(0, COLOR_WHITE, COLOR_WHITE);
 	// Spawn block
 	string blocks[BLOCK_SHAPE_COUNT];
 	string currentBlock = spawnNewBlock();
 	int rotation = 0;
 	int blocksCount = 1;
-
-	int blockMatrix[BLOCK_WIDTH][BLOCK_WIDTH];
-
+	block currentBlockObj;
+	vector<vector<int>> blockMatrix;
 
         // Generate gameboard
         string boardStr = "";
@@ -92,6 +105,10 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 		char x = getch();
 		clearOldBlocks(twin, posx, posy);
 		clearShapeOnBoard(blocksCount, board);
+
+		currentBlockObj = blockStringToBlockObj(rotateBlock(rotation, currentBlock));
+		blockMatrix = shapeStringToArray(currentBlockObj.content, blocksCount, currentBlockObj.ysize, currentBlockObj.xsize);
+
 		switch (x)
 		{
 			case W_KEY:
@@ -118,12 +135,10 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 				break;								
 		}
 
-
-		drawBlock(twin, posy, posx, currentBlock, rotation);
-		shapeStringToArray(currentBlock, blocksCount, blockMatrix);
+		drawBlockMatrix(twin, posy, posx, blockMatrix);
 		// posy is same as position y on twin
 		// posx is 0.5x as in twin, because scale x : scale y = 1:2
-		addShapeToGameBoard(blockMatrix, BLOCK_WIDTH, BLOCK_WIDTH, posy, posx/2, board);
+		addShapeToGameBoard(blockMatrix, posy, posx/2, board);
 		updateDebug(board, dwin);
 
 		wrefresh(iwin);
@@ -146,7 +161,6 @@ void game_init()
 	// Terminal is too small
 	if (ymax < TWIN_WIDTH || xmax < TWIN_WIDTH+IWIN_WIDTH)
 		exitOnSmallTerminal(ymax, xmax);
-
 	
 	WINDOW * twin = 
 		newwin(TWIN_HEIGHT, TWIN_WIDTH, 0, 0);		// twin stands for "Tetris Window"
