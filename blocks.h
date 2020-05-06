@@ -8,7 +8,7 @@ using namespace std;
 #define BLOCK_WIDTH 4
 #define BLOCK_WIDTH_SQR 16
 
-#define SHAPE_0 "..#...#...#...#."     
+#define SHAPE_0 "..#...#...#...#."
 #define SHAPE_1 ".##..#...#......"
 #define SHAPE_2 ".#...#...##....."
 #define SHAPE_3 "..#..##..#......"
