@@ -3,10 +3,12 @@
 #include "tetris/game.h"
 #include "tetris/debug.h"
 #include "tetris/options.h"
+
 #include <ncurses.h>
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
+#include <list>
 #include <string>
 
 using namespace std;
@@ -36,7 +38,6 @@ void generateGameBoard(int board[BOARD_HEIGHT][BOARD_WIDTH])
         }
 }
 
-
 string gameboardToString(int board[BOARD_HEIGHT][BOARD_WIDTH], int xmax)
 {
         string output = "";
@@ -53,3 +54,26 @@ string gameboardToString(int board[BOARD_HEIGHT][BOARD_WIDTH], int xmax)
         return output;
 }
 
+void addShapeToGameBoard(int blockMatrix[BLOCK_WIDTH][BLOCK_WIDTH], int ysize, int xsize, int posy, int posx, int board[BOARD_HEIGHT][BOARD_WIDTH])
+{
+        for (int i = 0; i < ysize; ++i)
+        {
+                for (int j = 0; j < xsize; ++j)
+                {
+                        board[posy+i][posx+j] = blockMatrix[i][j];
+                }
+        }
+}
+
+void clearShapeOnBoard(int blockNum, int board[BOARD_HEIGHT][BOARD_WIDTH])
+{
+        // STEP 1: Run through the whole block and find all cells with same blockNumber
+        for (int i = 0; i < BOARD_HEIGHT; ++i)
+        {
+		for (int j = 0; j < BOARD_WIDTH; ++j)
+		{
+			if (board[i][j] == blockNum)
+				board[i][j] = 0;
+		}
+        }
+}

@@ -12,6 +12,9 @@ using namespace std;
 #define IWIN_HEIGHT 22
 #define IWIN_WIDTH 22
 
+#define BOARD_HEIGHT TWIN_HEIGHT-2
+#define BOARD_WIDTH TWIN_WIDTH/2
+
 #define W_KEY 119
 #define A_KEY 97
 #define S_KEY 115

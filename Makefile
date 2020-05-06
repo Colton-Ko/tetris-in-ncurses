@@ -10,5 +10,6 @@ clean:
 	rm -rfv bin/*.o
 	
 ncurses:
+	chmod +x buildncurses.sh
 	./buildncurses.sh
 

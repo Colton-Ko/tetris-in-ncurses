@@ -85,3 +85,20 @@ string rotateBlock(int i, string blockContent)
 	}
 	return output;
 }
+
+// Converts the shapeString to integer array to be embedded
+void shapeStringToArray(string shapeString, int iteration, int block[BLOCK_WIDTH][BLOCK_WIDTH])
+{
+	for (int i = 0; i < BLOCK_WIDTH_SQR; ++i)
+	{
+		switch(shapeString[i])
+		{
+			case '.':
+				block[i/4][i%4] = 0;
+				break;
+			case '#':
+				block[i/4][i%4] = iteration;
+				break;
+		}
+	}
+}

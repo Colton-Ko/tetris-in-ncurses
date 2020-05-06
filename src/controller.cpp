@@ -69,12 +69,21 @@ void drawBlock(WINDOW * twin, int posy, int posx, string currentBlock, int rotat
 	wrefresh(twin);
 }
 
-void startGame(WINDOW * twin, WINDOW * iwin, int ymax, int xmax)
+void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 {	
 	// Spawn block
 	string blocks[BLOCK_SHAPE_COUNT];
 	string currentBlock = spawnNewBlock();
 	int rotation = 0;
+	int blocksCount = 1;
+
+	int blockMatrix[BLOCK_WIDTH][BLOCK_WIDTH];
+
+
+        // Generate gameboard
+        string boardStr = "";
+        int board[BOARD_HEIGHT][BOARD_WIDTH];
+        generateGameBoard(board);
 
 	int posx = (xmax-4)/2, posy = 1;
 
@@ -82,6 +91,7 @@ void startGame(WINDOW * twin, WINDOW * iwin, int ymax, int xmax)
 	{
 		char x = getch();
 		clearOldBlocks(twin, posx, posy);
+		clearShapeOnBoard(blocksCount, board);
 		switch (x)
 		{
 			case W_KEY:
@@ -108,12 +118,19 @@ void startGame(WINDOW * twin, WINDOW * iwin, int ymax, int xmax)
 				break;								
 		}
 
+
 		drawBlock(twin, posy, posx, currentBlock, rotation);
+		shapeStringToArray(currentBlock, blocksCount, blockMatrix);
+		// posy is same as position y on twin
+		// posx is 0.5x as in twin, because scale x : scale y = 1:2
+		addShapeToGameBoard(blockMatrix, BLOCK_WIDTH, BLOCK_WIDTH, posy, posx/2, board);
+		updateDebug(board, dwin);
+
 		wrefresh(iwin);
 	}
 }
 
-int main()
+void game_init()
 {
 	initscr();      					// Initialize screen
 	srand(time(NULL));					// Initialize random seed
@@ -142,19 +159,20 @@ int main()
 	drawBox(twin);
 	drawBox(iwin);
 	
-	if (DEBUG) 
-	{
-		WINDOW * dwin = 
-			newwin(IWIN_HEIGHT, IWIN_WIDTH, 0,
-				TWIN_WIDTH + IWIN_WIDTH);
-		refresh();
-		debugWindow(dwin);
-	}
+
+	WINDOW * dwin = 
+		newwin(IWIN_HEIGHT, IWIN_WIDTH, 0,
+			TWIN_WIDTH + IWIN_WIDTH);
+	refresh();
+	debugWindow(dwin);
 	
 	getmaxyx(iwin, ymax, xmax);
-
 	printInstructionWindow(iwin, xmax);
+	startGame(twin, iwin, dwin, ymax, xmax);
 
-	startGame(twin, iwin, ymax, xmax);
+}
 
+int main()
+{
+	game_init();
 }

@@ -26,3 +26,17 @@ void debugWindow(WINDOW * dwin)
         wrefresh(dwin);
 
 }
+
+void updateDebug(int board[BOARD_HEIGHT][BOARD_WIDTH], WINDOW * dwin)
+{
+        int xmax;
+        xmax = getmaxx(dwin);
+        string boardStr = gameboardToString(board, xmax);
+
+        mvwprintw(dwin, 1, 0, boardStr.c_str());
+
+        box(dwin, 0, 0);
+        mvwprintw(dwin, 0, (xmax - DEBUGWINDOW.size())/2, "DEBUG WINDOW");
+        
+        wrefresh(dwin);
+}
