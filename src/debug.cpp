@@ -1,6 +1,6 @@
-#include "ncurses.h"
-#include "game.h"
-#include "controller.h"
+#include <ncurses.h>
+#include "tetris/game.h"
+#include "tetris/controller.h"
 #include <string>
 #include <sstream>
 using namespace std;

@@ -1,8 +1,8 @@
-#include "blocks.h"
-#include "controller.h"
-#include "game.h"
-#include "debug.h"
-#include "options.h"
+#include "tetris/blocks.h"
+#include "tetris/controller.h"
+#include "tetris/game.h"
+#include "tetris/debug.h"
+#include "tetris/options.h"
 #include <ncurses.h>
 #include <iostream>
 #include <ctime>

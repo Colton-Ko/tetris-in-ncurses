@@ -1,6 +1,6 @@
 #include <ncurses.h>
 #include <string>
-#include "blocks.h"
+#include "tetris/blocks.h"
 #include <iostream>
 
 
