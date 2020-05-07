@@ -27,7 +27,7 @@ void printShapeString(string shapeString, int ysize, int xsize)
     }
 }
 
-void printBlockMatrix(vector<vector<int>> blockMatrix, int ysize, int xsize)
+void printBlockMatrix(vector< vector<int> > blockMatrix, int ysize, int xsize)
 {
     for (int i = 0; i < blockMatrix.size(); i++)
     {
@@ -39,9 +39,9 @@ void printBlockMatrix(vector<vector<int>> blockMatrix, int ysize, int xsize)
     }
 }
 
-vector<vector<int>> shapeStringToArray(string shapeString, int blockNum, int ysize, int xsize)
+vector< vector<int> > shapeStringToArray(string shapeString, int blockNum, int ysize, int xsize)
 {
-	vector<vector<int>> blockMatrix;
+	vector< vector<int> > blockMatrix;
 	vector<int> row;
     cout << ysize << " " << xsize << endl;
 	for (int i = 0; i < ysize; ++i)
@@ -132,7 +132,7 @@ int main()
 
     printShapeString(result.content, result.ysize, result.xsize);
 
-    vector<vector<int>> blockMatrix = shapeStringToArray(result.content, 1, result.ysize, result.xsize);
+    vector< vector<int> > blockMatrix = shapeStringToArray(result.content, 1, result.ysize, result.xsize);
     printBlockMatrix(blockMatrix, result.ysize, result.xsize);
 
 }

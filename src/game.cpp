@@ -58,7 +58,7 @@ string gameboardToString(int board[BOARD_HEIGHT][BOARD_WIDTH], int xmax)
 }
 
 
-void addShapeToGameBoard(vector<vector<int>> blockMatrix, int posy, int posx, int board[BOARD_HEIGHT][BOARD_WIDTH])
+void addShapeToGameBoard(vector< vector<int> > blockMatrix, int posy, int posx, int board[BOARD_HEIGHT][BOARD_WIDTH])
 {
 	for (int i = 0; i < blockMatrix.size(); i++)
 	{

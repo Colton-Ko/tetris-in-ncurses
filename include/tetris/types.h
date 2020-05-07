@@ -6,9 +6,9 @@ using namespace std;
 
 struct block
 {
-    int ysize = 0;
-    int xsize = 0;
-    string content = "";  
+    int ysize;
+    int xsize;
+    string content;  
 };
 
 #endif

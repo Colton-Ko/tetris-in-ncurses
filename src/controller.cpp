@@ -63,7 +63,7 @@ void printInstructionWindow(WINDOW * iwin, int xmax)
 }
 
 
-void drawBlockMatrix(WINDOW * twin, int posy, int posx, vector<vector<int>> blockMatrix)
+void drawBlockMatrix(WINDOW * twin, int posy, int posx, vector< vector<int> > blockMatrix)
 {
 	for (int i = 0; i < blockMatrix.size(); i++)			// For each ysize
 	{
@@ -91,7 +91,7 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 	int rotation = 0;
 	int blocksCount = 1;
 	block currentBlockObj;
-	vector<vector<int>> blockMatrix;
+	vector< vector<int> > blockMatrix;
 
         // Generate gameboard
         string boardStr = "";
@@ -140,7 +140,7 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 		// posx is 0.5x as in twin, because scale x : scale y = 1:2
 		addShapeToGameBoard(blockMatrix, posy, posx/2, board);
 		updateDebug(board, dwin);
-
+		drawBox(iwin);
 		wrefresh(iwin);
 	}
 }

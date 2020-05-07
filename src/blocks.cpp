@@ -72,11 +72,10 @@ string rotateBlock(int i, string blockContent)
 }
 
 // Converts the shapeString to integer array to be embedded
-vector<vector<int>> shapeStringToArray(string shapeString, int blockNum, int ysize, int xsize)
+vector< vector<int> > shapeStringToArray(string shapeString, int blockNum, int ysize, int xsize)
 {
-	vector<vector<int>> blockMatrix;
+	vector< vector<int> > blockMatrix;
 	vector<int> row;
-    cout << ysize << " " << xsize << endl;
 	for (int i = 0; i < ysize; ++i)
 	{
 		for (int j = 0; j < xsize; ++j)
