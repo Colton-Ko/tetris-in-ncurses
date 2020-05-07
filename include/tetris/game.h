@@ -17,4 +17,35 @@ vector< vector<int> > shapeStringToArray(string shapeString, int blockNum, int y
 void clearShapeOnBoard(int blockNum, int board[BOARD_HEIGHT][BOARD_WIDTH]);
 bool isTheMoveValid(int dy, int dx, int posy, int posx, block blockShape);
 
+bool isCollidedWithAnotherBlock(vector< vector<int> > currentBlockMatrix, int posy, int posx,  int blockNum, int board[BOARD_HEIGHT][BOARD_WIDTH]);
+
+void requestRotate(block tempBlockObj, int &rotation, int posy, int posx);
+void requestMoveLeft
+(
+	block currentBlockObj,
+	int posy, 
+	int &posx, 
+	vector <vector <int> > currentBlockMatrix, 
+	int blockNum, 
+	int board[BOARD_HEIGHT][BOARD_WIDTH]
+);
+void requestMoveRight
+(
+	block currentBlockObj,
+	int posy, 
+	int &posx, 
+	vector <vector <int> > currentBlockMatrix, 
+	int blockNum, 
+	int board[BOARD_HEIGHT][BOARD_WIDTH]
+);
+bool requestMoveDown	
+(	
+	block currentBlockObj,
+	int &posy, 
+	int posx, 
+	vector <vector <int> > currentBlockMatrix, 
+	int blockNum, 
+	int board[BOARD_HEIGHT][BOARD_WIDTH]
+);
+
 #endif

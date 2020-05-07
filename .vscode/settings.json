@@ -16,7 +16,9 @@
                 "__split_buffer": "cpp",
                 "iterator": "cpp",
                 "list": "cpp",
-                "unordered_map": "cpp"
+                "unordered_map": "cpp",
+                "thread": "cpp",
+                "chrono": "cpp"
         },
         "C_Cpp.default.includePath": ["/Volumes/Tank/prog/include"]
 }

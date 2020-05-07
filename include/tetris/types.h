@@ -11,4 +11,12 @@ struct block
     string content;  
 };
 
+struct blocksOnGameboard
+{
+    int blockNum;
+    int posy;
+    int posx;
+    blocksOnGameboard * head;
+};
+
 #endif

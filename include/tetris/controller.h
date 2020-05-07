@@ -4,7 +4,13 @@
 #include <string>
 #include <ncurses.h>
 #include "tetris/constants.h"
+
 using namespace std;
+
+// Extern from https://stackoverflow.com/questions/16909164/function-pointer-multiple-definition
+extern WINDOW * twin;
+extern WINDOW * iwin;
+extern WINDOW * dwin;
 
 void drawBox(WINDOW * win);
 void clearOldBlocks(WINDOW * window, int posx, int posy);

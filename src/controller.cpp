@@ -30,12 +30,18 @@
 #include "tetris/types.h"
 
 #include <ncurses.h>
+#include <cstring>
 #include <iostream>
-#include <ctime>
 #include <cstdlib>
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <thread>
+#include <chrono>
+
+WINDOW * twin;
+WINDOW * iwin;
+WINDOW * dwin;
 
 void drawBox(WINDOW * win)
 {
@@ -43,7 +49,7 @@ void drawBox(WINDOW * win)
 	wrefresh(win);
 }
 
-void clearOldBlocks(WINDOW * window, int posx, int posy)
+void clearScreen(WINDOW * window, int posx, int posy)
 {
 	wclear(window);
 	drawBox(window);
@@ -53,8 +59,9 @@ void clearOldBlocks(WINDOW * window, int posx, int posy)
 void exitOnSmallTerminal(int ymax, int xmax)
 {
 	// If you have a VT-80 terminal you can run this game
-	mvprintw(ymax/2, abs(xmax-41)/2, "Please this program in a larger terminal!");
-	mvprintw(ymax/2+1, abs(xmax-21)/2, "Minimum size is 44x22");
+	mvprintw(ymax/2-1, abs(xmax-LEN_RUN_LARGE_TERM)/2, RUN_LARGE_TERM);
+	mvprintw(ymax/2, abs(xmax-LEN_MIN_SIZE_PRMPT)/2, MIN_SIZE_PRMPT);
+	mvprintw(ymax/2+1, abs(xmax-LEN_EXIT_ANY_KEY)/2, EXIT_ANY_KEY);
 
 	getch();						// Press any key to exit
 	endwin();						// Clear ncurses screen window
@@ -86,23 +93,21 @@ void printInstructionWindow(WINDOW * iwin, int xmax)
 	wrefresh(iwin);
 }
 
-// Dont worry this will be removed in later versions
-void drawGameBoard(WINDOW * twin, int posy, int posx, vector < vector<int> > blockMatrix)
+
+void drawFromGameBoard(WINDOW * twin, int board[BOARD_HEIGHT][BOARD_WIDTH])
 {
-	for (int i = 0; i < blockMatrix.size(); i++)					// For each ysize
+	for (int i = 0; i < BOARD_HEIGHT; ++i)
 	{
-		for (int j = 0; j < blockMatrix[i].size(); j++)
+		for (int j = 0; j < BOARD_WIDTH; ++j)
 		{
-			if (blockMatrix[i][j])
+			if (board[i][j])
 			{
 				wattron(twin, COLOR_PAIR(WHITE_BACKGROUND));		// Enable printing a whole block "beautifully :)"
-				mvwprintw(twin, i+posy, posx+j, "#");			// Full block just for this line
+				mvwprintw(twin, i + X_PADDING, j + Y_PADDING, "#");	// Full block just for this line
 				wattroff(twin, COLOR_PAIR(WHITE_BACKGROUND));		// Turn off that beautify thing
 			}
-				
 		}
 	}
-
 	wrefresh(twin);
 }
 
@@ -119,34 +124,49 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 	block tempBlockObj;			// Temporary block object
 	vector< vector<int> > blockMatrix;	// 2D vector for storing the matrix verison of blockShape
 
-		// Generate gameboard
-		string boardStr = "";
-		int board[BOARD_HEIGHT][BOARD_WIDTH];
-		generateGameBoard(board);
+	int gameTicksOver = 0;
+	int level = INITIAL_LEVEL;
+	bool forceDown = false;
+	bool spawnNew = false;
+
+	// Generate gameboard			
+	string boardStr = "";			
+	int board[BOARD_HEIGHT][BOARD_WIDTH];	
+	generateGameBoard(board);		
 
 	int posx = (xmax-currentBlockObj.xsize)/2, posy = 0;
 
+	// Another thread is for moving block down every interval
 	while (true)
 	{
-		char x = getch();
-		clearOldBlocks(twin, posx, posy);
-		clearShapeOnBoard(blocksCount, board);
+		mvwprintw(dwin, 5, 13, to_string(blocksCount).c_str());
+		if (spawnNew)
+		{
+			spawnNew = false;
+			blocksCount += 1;
+			currentBlock = spawnNewBlock();
+			blockMatrix = blockObjContToMatrix(currentBlockObj, blocksCount);
 
-		wmove(iwin, 19, 0);
-		wclrtoeol(iwin);
-		wmove(iwin, 20, 0);
-		wclrtoeol(iwin);
+			posy = 0;
+			posx = (xmax-currentBlockObj.xsize)/2;
+		}
 
-		blockStringToBlockObj(rotateBlock(rotation, currentBlock));
+		this_thread::sleep_for(chrono::milliseconds(TIME_PER_TICK));	// Game tick is for 50ms by default
+		gameTicksOver += 1;						// Add 1 tick
 		
+		forceDown = (gameTicksOver == level);				// Level stores number of game tick for every force move down
+
+		char x = getch();						// Get user's control from keyboard
+		clearScreen(twin, posx, posy);					// Clear TWIN window
+		clearShapeOnBoard(blocksCount, board);				// Clear existing blockNum pieces in gameboard array
+
+		blockStringToBlockObj(rotateBlock(rotation, currentBlock));	// Convert spawnedNewBlock to block object
+
 		switch (x)
 		{
 			case W_KEY:
 				tempBlockObj = blockStringToBlockObj(rotateBlock((rotation + 1) % 4, currentBlock));
-				if (posx + tempBlockObj.xsize < BOARD_WIDTH && posy + tempBlockObj.ysize < BOARD_HEIGHT && posx > tempBlockObj.xsize)
-				{
-					rotation = (rotation + 1) % 4;
-				}
+				requestRotate(tempBlockObj, rotation, posy, posx);
 				mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
 				mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + tempBlockObj.xsize) + " " + to_string(posy + tempBlockObj.ysize)).c_str());
 				mvwprintw(iwin, 15, (xmax-1)/2, to_string(rotation).c_str());
@@ -154,33 +174,52 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 				break;
 
 			case A_KEY:
-				if (posx - 1 > 0)					// Prevent going out of bonds
-					posx -= 1;
+				requestMoveLeft(currentBlockObj, posy, posx, blockMatrix, blocksCount, board);
 				mvwprintw(iwin, 14, (xmax-1)/2, "A");
 				mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
 				mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
 				break;
 
 			case S_KEY:
-				if (posy + currentBlockObj.ysize < BOARD_HEIGHT)	// Prevent going out of bonds
-					posy += 1;
+				spawnNew = !requestMoveDown(currentBlockObj, posy, posx, blockMatrix, blocksCount, board);
 				mvwprintw(iwin, 14, (xmax-1)/2, "S");
 				mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
 				mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
 				break;
 			case D_KEY:
-				if (posx + 1 + currentBlockObj.xsize < BOARD_WIDTH+1)
-					posx += 1;
+				requestMoveRight(currentBlockObj, posy, posx, blockMatrix, blocksCount, board);
 				mvwprintw(iwin, 14, (xmax-1)/2, "D");
 				mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
 				mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
 				break;								
 		}
 
+		if (forceDown)	// Reached number of ticks
+		{
+			gameTicksOver = 0;
+			if (!requestMoveDown(currentBlockObj, posy, posx, blockMatrix, blocksCount, board))
+			{
+				// Locked in place
+				spawnNew = true;
+				// Check Empty Line -> Spawn new Block
+
+				// Check Lose game
+
+			}
+			else							// Can be moved down one block
+			{
+				// Just normal
+			}
+			
+			mvwprintw(iwin, 14, (xmax-1)/2, "S");
+			mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
+			mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
+		}
+
 		currentBlockObj = blockStringToBlockObj(rotateBlock(rotation % 4, currentBlock));
 		blockMatrix = blockObjContToMatrix(currentBlockObj, blocksCount);
 		addShapeToGameBoard(blockMatrix, posy, posx, board);
-		drawGameBoard(twin, posy + Y_PADDING, posx + X_PADDING, blockMatrix);
+		drawFromGameBoard(twin, board);
 		updateDebug(board, dwin);
 		box(iwin, 0, 0);
 		wrefresh(iwin);
@@ -194,8 +233,8 @@ void game_init()
 	start_color();						// Full black background
 	init_pair(WHITE_BACKGROUND, COLOR_WHITE, COLOR_WHITE);
 	curs_set(0);    					// Hide cursor
-	noecho();							// No echo (@echo off)
-	
+	noecho();						// No echo (@echo off)
+
 	int ymax, xmax;						// Variables for screen dimension
 	getmaxyx(stdscr, ymax, xmax);				// Get screen dimension
 
@@ -203,11 +242,12 @@ void game_init()
 	if (ymax < TWIN_WIDTH || xmax < TWIN_WIDTH+IWIN_WIDTH)
 		exitOnSmallTerminal(ymax, xmax);
 	
-	WINDOW * twin = 
+	twin = 
 		newwin(TWIN_HEIGHT, TWIN_WIDTH, 0, 0);		// twin stands for "Tetris Window"
-	WINDOW * iwin = 
+	iwin = 
 		newwin(IWIN_HEIGHT, IWIN_WIDTH, 0, TWIN_WIDTH);	// iwin stands for "Info. window"
 
+	nodelay(stdscr, true);
 	
 	refresh();
 
@@ -215,9 +255,9 @@ void game_init()
 	drawBox(iwin);
 	
 
-	WINDOW * dwin = 
-		newwin(DWIN_HEIGHT, DWIN_WIDTH, 0,
+	dwin = newwin(DWIN_HEIGHT, DWIN_WIDTH, 0,
 			TWIN_WIDTH + IWIN_WIDTH);
+
 	refresh();
 	debugWindow(dwin);
 	
