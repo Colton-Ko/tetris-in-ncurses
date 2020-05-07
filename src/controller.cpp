@@ -71,9 +71,9 @@ void drawGameBoard(WINDOW * twin, int posy, int posx, vector < vector<int> > blo
 		{
 			if (blockMatrix[i][j])
 			{
-				wattron(twin, 0);
+				wattron(twin, COLOR_PAIR(0));
 				mvwprintw(twin, i+posy, posx+j, "#");
-				wattroff(twin, 0);
+				wattroff(twin, COLOR_PAIR(0));
 			}
 				
 		}
