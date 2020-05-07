@@ -82,3 +82,6 @@ void clearShapeOnBoard(int blockNum, int board[BOARD_HEIGHT][BOARD_WIDTH])
 }
 
 bool isCollidedWithAnotherBlock(int board[BOARD_HEIGHT][BOARD_WIDTH])
+{
+        
+}

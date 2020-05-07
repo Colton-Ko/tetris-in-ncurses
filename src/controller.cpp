@@ -1,3 +1,26 @@
+/*
+	HKU ENGG 1340 Programming and technologies
+	Group 140 (2019-2020 2nd Semester)
+
+	AUTHOR
+	TAM CHUN KIT	(3035686554)
+	CHOW NAM FUNG	(35<x+>)
+
+	DATE
+	2020-05-07
+
+	FILENAME
+	controller.cpp
+
+	REFERENCES
+	This piece has direct references to these sources
+		-	
+
+	VIEW
+		Tabsize	:	8
+		Indentation:	TAB
+*/
+
 #include "tetris/blocks.h"
 #include "tetris/controller.h"
 #include "tetris/game.h"
@@ -63,17 +86,18 @@ void printInstructionWindow(WINDOW * iwin, int xmax)
 	wrefresh(iwin);
 }
 
+// Dont worry this will be removed in later versions
 void drawGameBoard(WINDOW * twin, int posy, int posx, vector < vector<int> > blockMatrix)
 {
-	for (int i = 0; i < blockMatrix.size(); i++)			// For each ysize
+	for (int i = 0; i < blockMatrix.size(); i++)					// For each ysize
 	{
 		for (int j = 0; j < blockMatrix[i].size(); j++)
 		{
 			if (blockMatrix[i][j])
 			{
-				wattron(twin, COLOR_PAIR(WHITE_BACKGROUND));
-				mvwprintw(twin, i+posy, posx+j, "#");
-				wattroff(twin, COLOR_PAIR(WHITE_BACKGROUND));
+				wattron(twin, COLOR_PAIR(WHITE_BACKGROUND));		// Enable printing a whole block "beautifully :)"
+				mvwprintw(twin, i+posy, posx+j, "#");			// Full block just for this line
+				wattroff(twin, COLOR_PAIR(WHITE_BACKGROUND));		// Turn off that beautify thing
 			}
 				
 		}
@@ -87,11 +111,13 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 	// Spawn block
 	string blocks[BLOCK_SHAPE_COUNT];
 	string currentBlock = spawnNewBlock();
-	int rotation = 0;
-	int blocksCount = 1;
-	block currentBlockObj;
-	block tempBlockObj;
-	vector< vector<int> > blockMatrix;
+
+	// Declare variables
+	int rotation = 0;			// Stores Rotation angle, where angle = 90*rotation
+	int blocksCount = 1;			// Acts as the block Number
+	block currentBlockObj;			// Current blockObject/ blockShape
+	block tempBlockObj;			// Temporary block object
+	vector< vector<int> > blockMatrix;	// 2D vector for storing the matrix verison of blockShape
 
         // Generate gameboard
         string boardStr = "";
