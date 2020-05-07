@@ -21,6 +21,7 @@
 		Tabsize = 8
 		Indentation:	TAB
 */
+
 #ifndef BLOCKS_H
 #define BLOCKS_H
 
@@ -37,9 +38,5 @@ string rotateBlock(int i, string blockContent);
 void addShapeToGameBoard(int block[BLOCK_WIDTH][BLOCK_WIDTH], int ysize, int xsize, int posx, int posy, int board[BOARD_HEIGHT][BOARD_WIDTH]);
 block blockStringToBlockObj(string shapeString);
 vector< vector<int> > blockObjContToMatrix(block blockShape, int n);
-<<<<<<< HEAD
 
 #endif
-=======
-#endif
->>>>>>> 01d93bba482e11a8a4ce1ec9a5fe3ad720d1e4b9

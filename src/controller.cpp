@@ -119,10 +119,10 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 	block tempBlockObj;			// Temporary block object
 	vector< vector<int> > blockMatrix;	// 2D vector for storing the matrix verison of blockShape
 
-        // Generate gameboard
-        string boardStr = "";
-        int board[BOARD_HEIGHT][BOARD_WIDTH];
-        generateGameBoard(board);
+		// Generate gameboard
+		string boardStr = "";
+		int board[BOARD_HEIGHT][BOARD_WIDTH];
+		generateGameBoard(board);
 
 	int posx = (xmax-currentBlockObj.xsize)/2, posy = 0;
 
