@@ -2,6 +2,7 @@
 #define TYPES_H 
 
 #include <string>
+#include <vector>
 using namespace std;
 
 struct block
@@ -18,5 +19,7 @@ struct blocksOnGameboard
     int posx;
     blocksOnGameboard * head;
 };
+
+typedef vector< vector<int> > blockMatrix;
 
 #endif

@@ -15,10 +15,10 @@ Where I tried hard to implement this idea, it turns out this file of c++ code ha
 
 ```mermaid
 graph LR
-	ui[User pressed WASD key] --> Controller
-	tick[Timer doTick] --> Controller
-	Controller --> gameboard["Gameboard: int[BOARD_HEIGHT][BOARD_WIDTH]"]
-	Controller --> window[Ncurses: WINDOW * TWIN]
+        ui[User pressed WASD key] --> Controller
+        tick[Timer doTick] --> Controller
+        Controller --> gameboard["Gameboard: int[BOARD_HEIGHT][BOARD_WIDTH]"]
+        Controller --> window[Ncurses: WINDOW * TWIN]
 ```
 
 ### Functions

@@ -30,31 +30,38 @@
 #define SHAPE_0                 "..#...#...#...#."
 #define SHAPE_1                 ".##..#...#......"
 #define SHAPE_2                 ".#...#...##....."
-#define SHAPE_3			"..#..##..#......"
+#define SHAPE_3                 "..#..##..#......"
 #define SHAPE_4                 ".#...##...#....."
 #define SHAPE_5                 ".....##..##....."
 #define SHAPE_6                 ".#...##..#......"
 
 #define BLOCK_EMPTY_LINE        "...."
-#define EMPTY_BLOCK_NUM         0
 #define OCCUPIED_CHAR           '#'
 
 #define DELETE_CHAR             'X'
 
 #define WHITE_BACKGROUND        1
+#define EMPTY_BLOCK_NUM         0
 #define X_PADDING               1
 #define Y_PADDING               1
 
-#define DIRECTION_DOWN		0
-#define DIRECTION_LEFT		1
-#define DIRECTION_RIGHT		2
+#define DIRECTION_DOWN          0
+#define DIRECTION_LEFT          1
+#define DIRECTION_RIGHT         2
 
 #define LEN_RUN_LARGE_TERM      41
-#define LEN_MIN_SIZE_PRMPT	21
-#define LEN_EXIT_ANY_KEY	22
+#define LEN_MIN_SIZE_PRMPT      21
+#define LEN_EXIT_ANY_KEY        22
 
-#define RUN_LARGE_TERM      	"Please this program in a larger terminal!"
-#define MIN_SIZE_PRMPT		"Minimum size is 44x22"
-#define EXIT_ANY_KEY		"Press any key to exit."
+#define NO_LINE_TO_CLEAR        -1
+
+#define X_UPPER_BOUNDARY        BOARD_WIDTH
+#define X_LOWER_BOUNDARY        0
+#define Y_UPPER_BOUNDARY        BOARD_HEIGHT
+#define Y_LOWER_BOUNDARY        0
+
+#define RUN_LARGE_TERM          "Please this program in a larger terminal!"
+#define MIN_SIZE_PRMPT          "Minimum size is 44x22"
+#define EXIT_ANY_KEY            "Press any key to exit."
 
 #endif

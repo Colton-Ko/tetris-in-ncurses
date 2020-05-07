@@ -13,7 +13,7 @@
 	blocks.cpp
 
 	REFERENCES
-	This piece has direct references to these sources
+	This piece of code has direct references to these sources
 		- https://youtu.be/8OK8_tHeCIA
 		- https://stackoverflow.com/questions/20326356/how-to-remove-all-the-occurrences-of-a-char-in-c-string
 
@@ -84,19 +84,19 @@ int rotateBlock(int i, int mode)
 	return i;
 }
 
-string rotateBlock(int i, string blockContent)
+string rotateBlock(int rotation, string blockContent)
 {
 	string output = "";
 	for ( int j = 0; j < BLOCK_WIDTH_SQR; ++j)
 	{
 		if (isprint(blockContent[j]))
-			output += blockContent[rotateBlock(j,i)];
+			output += blockContent[rotateBlock(j,rotation)];
 	}
 	return output;
 }
 
 // Converts the shapeString to integer array to be embedded
-vector< vector<int> > blockObjContToMatrix(block blockShape, int blockNum)
+blockMatrix blockObjContToMatrix(block blockShape, int blockNum)
 {
         vector< vector<int> > blockMatrix;
         vector<int> row;

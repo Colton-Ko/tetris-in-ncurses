@@ -49,26 +49,26 @@ void printBlockMatrix(vector< vector<int> > blockMatrix, int ysize, int xsize)
 
 vector< vector<int> > shapeStringToArray(string shapeString, int blockNum, int ysize, int xsize)
 {
-	vector< vector<int> > blockMatrix;
-	vector<int> row;
+        vector< vector<int> > blockMatrix;
+        vector<int> row;
     cout << ysize << " " << xsize << endl;
-	for (int i = 0; i < ysize; ++i)
+        for (int i = 0; i < ysize; ++i)
 	{
-		for (int j = 0; j < xsize; ++j)
+	        for (int j = 0; j < xsize; ++j)
 		{
-				switch(shapeString[4*i+j])
+			        switch(shapeString[4*i+j])
 				{
-					case '.':							// Empty space
-						row.push_back(0);
-						break;
-					case '#':						
-						row.push_back(blockNum);		// Solid block
-						break;
+				        case '.':							// Empty space
+					        row.push_back(0);
+					        break;
+				        case '#':						
+					        row.push_back(blockNum);		// Solid block
+					        break;
 				}
 		}
-		blockMatrix.push_back(row);
+	        blockMatrix.push_back(row);
 	}
-	return blockMatrix;
+        return blockMatrix;
 }
 
 
