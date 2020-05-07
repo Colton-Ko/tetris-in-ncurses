@@ -2,6 +2,7 @@
 #define BLOCKS_H
 
 #include <string>
+#include <vector>
 #include "tetris/constants.h"
 #include "tetris/types.h"
 
