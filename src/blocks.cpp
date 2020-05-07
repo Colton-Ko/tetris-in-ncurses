@@ -94,57 +94,60 @@ vector< vector<int> > blockObjContToMatrix(block blockShape, int n)
 
 block blockStringToBlockObj(string shapeString)
 {
-    int xsize = BLOCK_WIDTH, ysize = BLOCK_WIDTH;
-    string temp = "";               //  Temporary string for checking
-    string output = shapeString;    //  Scratch pad string
+	int xsize = BLOCK_WIDTH, ysize = BLOCK_WIDTH;
+	string temp = "";               //  Temporary string for checking
+	string output = shapeString;    //  Scratch pad string
 
-    for (int j = 0; j < BLOCK_WIDTH; ++j)
-    {
-        for (int i = 0; i < BLOCK_WIDTH; ++i)
-        {
-            temp.push_back(shapeString[4*i+j]);
-        }
-        if (temp == BLOCK_EMPTY_LINE)
-        {
-            xsize -= 1;
-            // Mark chars to be deleted with DELETE CHAR
-            for (size_t i = 0; i < BLOCK_WIDTH; ++i)
-            {
-                output[4*i+j] = DELETE_CHAR;
-            }
-        }
-        temp = "";
-    }
+	for (int j = 0; j < BLOCK_WIDTH; ++j)
+	{
+		for (int i = 0; i < BLOCK_WIDTH; ++i)
+		{
+			temp.push_back(shapeString[4*i+j]);
+		}
+		if (temp == BLOCK_EMPTY_LINE)
+			{
+			xsize -= 1;
+			// Mark chars to be deleted with DELETE CHAR
+			for (size_t i = 0; i < BLOCK_WIDTH; ++i)
+			{
+				output[4*i+j] = DELETE_CHAR;
+			}
+		}
+		temp = "";
+	}
 
-    // This code is from https://stackoverflow.com/questions/20326356/how-to-remove-all-the-occurrences-of-a-char-in-c-string
-    output.erase(remove(output.begin(), output.end(), DELETE_CHAR), output.end());
+	output.erase(remove(output.begin(), output.end(), DELETE_CHAR), output.end());
+	// Lines 
+	// This code is from https://stackoverflow.com/questions/20326356/how-to-remove-all-the-occurrences-of-a-char-in-c-string
 
-    temp = "";
-    for (int i = 0; i < BLOCK_WIDTH; ++i)
-    {
-        for (int j = 0; j < xsize; ++j)
-        {
-            temp.push_back(shapeString[4*i+j]);
-        }
-        if (temp == BLOCK_EMPTY_LINE)
-        {
-            ysize -= 1;
-            // Mark these chars to be deleted with DELETE CHAR
-            for (int j = 0; j < xsize; ++j)
-            {
-                output[4*i+j] = DELETE_CHAR;
-            }
-        }
-        temp = "";
-    }
+	temp = "";
+	string emptyXsizeLine(xsize, '.');
 
-    // This code is from https://stackoverflow.com/questions/20326356/how-to-remove-all-the-occurrences-of-a-char-in-c-string
-    output.erase(remove(output.begin(), output.end(), DELETE_CHAR), output.end());
+	for (int i = 0; i < BLOCK_WIDTH; ++i)
+	{
+		for (int j = 0; j < xsize; ++j)
+		{
+			temp.push_back(output[xsize*i+j]);
+		}
+		if (temp == emptyXsizeLine)
+		{
+			ysize -= 1;
+			// Mark these chars to be deleted with DELETE CHAR
+			for (int j = 0; j < xsize; ++j)
+			{
+				output[xsize*i+j] = DELETE_CHAR;
+			}
+		}
+		temp = "";
+	}
 
-    block result;
-    result.ysize = ysize;
-    result.xsize = xsize;
-    result.content = output;
+	// This code is from https://stackoverflow.com/questions/20326356/how-to-remove-all-the-occurrences-of-a-char-in-c-string
+	output.erase(remove(output.begin(), output.end(), DELETE_CHAR), output.end());
 
-    return result;
+	block result;
+	result.ysize = ysize;
+	result.xsize = xsize;
+	result.content = output;
+
+	return result;
 }

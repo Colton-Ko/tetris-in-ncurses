@@ -2,11 +2,14 @@
 #define CONSTANTS_H 
 
 #define GAMEINFO                "GAME RULES"
-#define TWIN_HEIGHT             22
-#define TWIN_WIDTH              22
+#define TWIN_HEIGHT             24
+#define TWIN_WIDTH              23
 
-#define IWIN_HEIGHT             22
-#define IWIN_WIDTH              22
+#define IWIN_HEIGHT             24
+#define IWIN_WIDTH              23
+
+#define DWIN_HEIGHT             24
+#define DWIN_WIDTH              23
 
 #define BOARD_HEIGHT            22
 #define BOARD_WIDTH             20
@@ -36,5 +39,7 @@
 #define DELETE_CHAR             'X'
 
 #define WHITE_BACKGROUND        1
+#define X_PADDING               1
+#define Y_PADDING               1
 
 #endif

@@ -71,9 +71,9 @@ void drawGameBoard(WINDOW * twin, int posy, int posx, vector < vector<int> > blo
 		{
 			if (blockMatrix[i][j])
 			{
-				wattron(twin, COLOR_PAIR(0));
+				wattron(twin, COLOR_PAIR(WHITE_BACKGROUND));
 				mvwprintw(twin, i+posy, posx+j, "#");
-				wattroff(twin, COLOR_PAIR(0));
+				wattroff(twin, COLOR_PAIR(WHITE_BACKGROUND));
 			}
 				
 		}
@@ -89,7 +89,7 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 	string currentBlock = spawnNewBlock();
 	int rotation = 0;
 	int blocksCount = 1;
-	block currentBlockObj = blockStringToBlockObj(rotateBlock(rotation, currentBlock));
+	block currentBlockObj;
 	block tempBlockObj;
 	vector< vector<int> > blockMatrix;
 
@@ -111,6 +111,8 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 		wmove(iwin, 20, 0);
 		wclrtoeol(iwin);
 
+		blockStringToBlockObj(rotateBlock(rotation, currentBlock));
+		
 		switch (x)
 		{
 			case W_KEY:
@@ -134,7 +136,7 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 				break;
 
 			case S_KEY:
-				if (posy + currentBlockObj.ysize + 1 < BOARD_HEIGHT)	// Prevent going out of bonds
+				if (posy + currentBlockObj.ysize < BOARD_HEIGHT)	// Prevent going out of bonds
 					posy += 1;
 				mvwprintw(iwin, 14, (xmax-1)/2, "S");
 				mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
@@ -148,10 +150,11 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 				mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
 				break;								
 		}
+
 		currentBlockObj = blockStringToBlockObj(rotateBlock(rotation % 4, currentBlock));
 		blockMatrix = blockObjContToMatrix(currentBlockObj, blocksCount);
 		addShapeToGameBoard(blockMatrix, posy, posx, board);
-		drawGameBoard(twin, posy, posx, blockMatrix);
+		drawGameBoard(twin, posy + Y_PADDING, posx + X_PADDING, blockMatrix);
 		updateDebug(board, dwin);
 		box(iwin, 0, 0);
 		wrefresh(iwin);
@@ -165,7 +168,7 @@ void game_init()
 	start_color();						// Full black background
 	init_pair(WHITE_BACKGROUND, COLOR_WHITE, COLOR_WHITE);
 	curs_set(0);    					// Hide cursor
-	noecho();						// No echo (@echo off)
+	noecho();							// No echo (@echo off)
 	
 	int ymax, xmax;						// Variables for screen dimension
 	getmaxyx(stdscr, ymax, xmax);				// Get screen dimension
@@ -187,7 +190,7 @@ void game_init()
 	
 
 	WINDOW * dwin = 
-		newwin(IWIN_HEIGHT, IWIN_WIDTH, 0,
+		newwin(DWIN_HEIGHT, DWIN_WIDTH, 0,
 			TWIN_WIDTH + IWIN_WIDTH);
 	refresh();
 	debugWindow(dwin);
