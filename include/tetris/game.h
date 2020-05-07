@@ -19,7 +19,13 @@ bool isTheMoveValid(int dy, int dx, int posy, int posx, block blockShape);
 
 bool isCollidedWithAnotherBlock(vector< vector<int> > currentBlockMatrix, int posy, int posx,  int blockNum, int board[BOARD_HEIGHT][BOARD_WIDTH]);
 
-void requestRotate(block tempBlockObj, int &rotation, int posy, int posx);
+void requestRotate
+(
+	block tempBlockObj, 
+	int &rotation, 
+	int posy, 
+	int posx
+);
 void requestMoveLeft
 (
 	block currentBlockObj,

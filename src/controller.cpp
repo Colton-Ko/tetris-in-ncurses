@@ -4,7 +4,7 @@
 
 	AUTHOR
 	TAM CHUN KIT	(3035686554)
-	CHOW NAM FUNG	(35<x+>)
+	CHOW NAM FUNG	(3035712767)
 
 	DATE
 	2020-05-07
@@ -167,30 +167,30 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 			case W_KEY:
 				tempBlockObj = blockStringToBlockObj(rotateBlock((rotation + 1) % 4, currentBlock));
 				requestRotate(tempBlockObj, rotation, posy, posx);
-				mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
-				mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + tempBlockObj.xsize) + " " + to_string(posy + tempBlockObj.ysize)).c_str());
-				mvwprintw(iwin, 15, (xmax-1)/2, to_string(rotation).c_str());
-				mvwprintw(iwin, 14, (xmax-1)/2, "W");
+				// mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
+				// mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + tempBlockObj.xsize) + " " + to_string(posy + tempBlockObj.ysize)).c_str());
+				// mvwprintw(iwin, 15, (xmax-1)/2, to_string(rotation).c_str());
+				// mvwprintw(iwin, 14, (xmax-1)/2, "W");
 				break;
 
 			case A_KEY:
 				requestMoveLeft(currentBlockObj, posy, posx, blockMatrix, blocksCount, board);
-				mvwprintw(iwin, 14, (xmax-1)/2, "A");
-				mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
-				mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
+				// mvwprintw(iwin, 14, (xmax-1)/2, "A");
+				// mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
+				// mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
 				break;
 
 			case S_KEY:
 				spawnNew = !requestMoveDown(currentBlockObj, posy, posx, blockMatrix, blocksCount, board);
-				mvwprintw(iwin, 14, (xmax-1)/2, "S");
-				mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
-				mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
+				// mvwprintw(iwin, 14, (xmax-1)/2, "S");
+				// mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
+				// mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
 				break;
 			case D_KEY:
 				requestMoveRight(currentBlockObj, posy, posx, blockMatrix, blocksCount, board);
-				mvwprintw(iwin, 14, (xmax-1)/2, "D");
-				mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
-				mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
+				// mvwprintw(iwin, 14, (xmax-1)/2, "D");
+				// mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
+				// mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
 				break;								
 		}
 
@@ -211,9 +211,9 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 				// Just normal
 			}
 			
-			mvwprintw(iwin, 14, (xmax-1)/2, "S");
-			mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
-			mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
+			// mvwprintw(iwin, 14, (xmax-1)/2, "S");
+			// mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
+			// mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
 		}
 
 		currentBlockObj = blockStringToBlockObj(rotateBlock(rotation % 4, currentBlock));
