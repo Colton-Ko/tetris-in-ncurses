@@ -45,10 +45,6 @@ using namespace std;
 int randomInteger(int max)
 {
         int x = rand() % max;
-
-        // OVERRIDE
-        x = 0;
-
         return x;
 }
 
