@@ -1,3 +1,6 @@
+CXXFLAGS=-I include -I local/include/ncursestw -I local/include -L local/lib -lncursestw -ldl -pthread
+CXX=g++
+
 .PHONY: ncurses clean all
 
 all:
@@ -10,10 +13,11 @@ controller:
 clean:
 	rm -rfv local/
 	rm -rfv ncurses/
+	rm -rfv .ncurses-ready
 	rm -rfv bin/*.o
 
 test:
-	g++ test/unit-blockToBlockMatrix.cpp -I include -I local/include/ncursestw -I local/include -L local/lib -lncursestw -o test/a.out && cd test && ./a.out
+	g++ test/unit-blockToBlockMatrix.cpp -I include -I local/include/ncursestw -I local/include -L local/lib -lncursestw -o test/a.out 
 
 ncurses:
 	chmod +x buildncurses.sh

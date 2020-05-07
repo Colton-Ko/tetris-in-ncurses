@@ -17,6 +17,11 @@ const string DEBUGWINDOW = "DEBUG WINDOW";
 
 void debugWindow(WINDOW * dwin)
 {
+        if (!DEBUG)
+        {
+                return;
+        }
+
         int ymax, xmax;
         getmaxyx(dwin, ymax, xmax);
 
@@ -37,6 +42,10 @@ void debugWindow(WINDOW * dwin)
 
 void updateDebug(int board[BOARD_HEIGHT][BOARD_WIDTH], WINDOW * dwin)
 {
+        if (!DEBUG)
+        {
+                return;
+        }
         int xmax;
         xmax = getmaxx(dwin);
         string boardStr = gameboardToString(board, xmax);

@@ -45,6 +45,10 @@ using namespace std;
 int randomInteger(int max)
 {
         int x = rand() % max;
+
+        // OVERRIDE
+        x = 0;
+
         return x;
 }
 
@@ -270,7 +274,7 @@ void requestMoveLeft
         }
 }
 
-// Validates whether a down move is valid. Increment &posy if valid.
+// Validates whether a down move is valid. Increment &posy if valid. Returns false if rejected.
 bool requestMoveDown        
 (        
         block currentBlockObj,
@@ -304,26 +308,32 @@ void requestRotate(block tempBlockObj, int &rotation, int posy, int posx, int bl
         }
 }
 
-// Look for a consecutive empty line to clear. Returns posy of that line if found. Return -1 if not found.
+// Look for a consecutive filled line to clear. Returns posy of that line if found. Return -1 if not found.
 int lookForFilledLine(int board[BOARD_HEIGHT][BOARD_WIDTH])
 {	
-        // To look for empty lines
+        // Count how many non-empty cells in one line
+        int accmul = 0; 
+
+        // To look for completely filled lines
         // Traverse the whole line and count for non-zero blockNumber
-        // To speed things up this for loop is run reversed.
-        
         for (int i = 0; i < Y_UPPER_BOUNDARY; ++i)
         {
                 for (int j = 0; j < X_UPPER_BOUNDARY; ++j)
                 {
-                        if (board[Y_UPPER_BOUNDARY-i-1][j] == 0)        // An empty block is found
-                        {                                               // Impossible to be empty
-                                break;                                  // Break the whole loop
-                        }
-                        if (j == X_UPPER_BOUNDARY - 1)
+                        if (board[i][j] == EMPTY_BLOCK_NUM)
                         {
-                                return i;
+                                continue;                               // Skip checking current line
+                        }
+                        if (board[i][j] != EMPTY_BLOCK_NUM)
+                        {
+                                accmul += 1;                            // Add counter by 1
+                        }
+                        if (accmul == X_UPPER_BOUNDARY - X_PADDING)     // If the line is full-filled
+                        {
+                                return i;                               // Return that line number
                         }
                 }
+                accmul = 0;
         }
         return NO_LINE_TO_CLEAR;
 }
@@ -344,7 +354,7 @@ void clearLine(int lineNumber, int board[BOARD_HEIGHT][BOARD_WIDTH])
                 lineNumber > Y_UPPER_BOUNDARY           // Line number does not even exist (Too high)
         )
         {
-                return;                         // Leave function
+                return;                                 // Leave function
         }
 
         // Set zero on that line
@@ -353,5 +363,12 @@ void clearLine(int lineNumber, int board[BOARD_HEIGHT][BOARD_WIDTH])
                 board[lineNumber][j] = 0;
         }
 
-
+        // Step 2: Shifting game board downwards
+        for (int i = lineNumber-1; i > 2; --i)
+        {
+                for (int j = 0; j < X_UPPER_BOUNDARY; ++j)
+                {
+                        board[i+1][j] = board[i][j];
+                }
+        }
 }

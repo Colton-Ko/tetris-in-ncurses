@@ -7,6 +7,9 @@ fi
 
 cd ncurses
 # Referred from https://stackoverflow.com/questions/60325432/using-ncurses-without-installing-it
+
 ./configure --prefix $(pwd)/../local --enable-widec --with-pthread
 make -j
 make -j install
+
+touch .ncurses-ready

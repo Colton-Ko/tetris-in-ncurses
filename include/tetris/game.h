@@ -113,4 +113,11 @@ int lookForFilledLine
         int board[BOARD_HEIGHT][BOARD_WIDTH]
 );
 
+// Clears a line in a gameboard. Accpepts a lineNumber for the line to clear. int * board will be cleared board.
+void clearLine
+(
+        int lineNumber, 
+        int board[BOARD_HEIGHT][BOARD_WIDTH]
+);
+
 #endif

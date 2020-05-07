@@ -93,7 +93,6 @@ void printInstructionWindow(WINDOW * iwin, int xmax)
         wrefresh(iwin);
 }
 
-
 void drawFromGameBoard(WINDOW * twin, int board[BOARD_HEIGHT][BOARD_WIDTH])
 {
         for (int i = 0; i < BOARD_HEIGHT; ++i)
@@ -129,6 +128,7 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
         bool forceDown = false;
         bool spawnNew = false;
         int lineToClear = -1;
+        int linesCleared = 0;
 
         // Generate gameboard                        
         string boardStr = "";                        
@@ -147,19 +147,79 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 
                         // Check for filled line to clear
                         lineToClear = lookForFilledLine(board);
-                        if (lineToClear != NO_LINE_TO_CLEAR)                                    // Need to clear that line
+                        while (lineToClear != NO_LINE_TO_CLEAR)                                 // Detect all lines to clear with While Loop
                         {
-
+                                clearLine(lineToClear, board);                                  // Clear that line
+                                lineToClear = lookForFilledLine(board);                         // Update new lineToClear
+                                linesCleared += 1;
                         }
 
+                        // Update score
+                        mvwprintw(
+                                iwin, 
+                                11, 
+                                (xmax - to_string(linesCleared).length())/2, 
+                                to_string(linesCleared).c_str());
 
                         // Spawn new block
                         blocksCount += 1;                                                       // Increment blockNum to lock existing blocks
+                        currentBlockObj = 
+                                blockStringToBlockObj(rotateBlock(rotation % 4, currentBlock)); // Update currentBlockObj
                         currentBlock = spawnNewBlock();                                         // Spawn new block and put in currentBlock (blockString)
                         blockMatrix = blockObjContToMatrix(currentBlockObj, blocksCount);       // Convert to blockMatrix
 
                         posy = 0;
                         posx = (xmax-currentBlockObj.xsize)/2;
+
+                        // Check Whether new block is spawned valid
+                        if (!requestMoveDown(
+                                currentBlockObj, 
+                                posy, 
+                                posx, 
+                                blockMatrix, 
+                                blocksCount, 
+                                board))                                                         // If collided with block below
+                        {
+                                // Show game over
+                                wclear(twin);
+                                wclear(iwin);
+                                wclear(dwin);
+
+                                wrefresh(twin);
+                                wrefresh(iwin);
+                                wrefresh(dwin);
+
+                                getmaxyx(stdscr, ymax, xmax);
+
+                                string score (YOUR_SCORE);
+                                score += to_string(linesCleared);
+
+                                string exitEnter (EXIT_ENTER_KEY);
+
+                                clear();
+
+                                mvprintw(ymax/2-1, (xmax-LEN_END_GAME)/2 , END_GAME);
+                                mvprintw(ymax/2, (xmax-score.length())/2 , score.c_str());
+                                mvprintw(ymax/2+1, (xmax-exitEnter.length())/2 , exitEnter.c_str());
+
+                                nodelay(stdscr, false);
+                                refresh();
+
+                                while(getch() != ' ')
+                                {
+                                        clear();
+
+                                        mvprintw(ymax/2-1, (xmax-LEN_END_GAME)/2 , END_GAME);
+                                        mvprintw(ymax/2, (xmax-score.length())/2 , score.c_str());
+                                        mvprintw(ymax/2+1, (xmax-exitEnter.length())/2 , exitEnter.c_str());
+
+                                        nodelay(stdscr, false);
+                                        refresh();
+                                }
+
+                                endwin();
+                                exit(0);
+                        }
                 }
 
                 this_thread::sleep_for(chrono::milliseconds(TIME_PER_TICK));            // Game tick is for 50ms by default

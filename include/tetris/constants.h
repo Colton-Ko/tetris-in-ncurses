@@ -62,6 +62,12 @@
 
 #define RUN_LARGE_TERM          "Please this program in a larger terminal!"
 #define MIN_SIZE_PRMPT          "Minimum size is 44x22"
-#define EXIT_ANY_KEY            "Press any key to exit."
+#define EXIT_ANY_KEY            "Press any key to exit"
 
+#define EXIT_ENTER_KEY          "Press Spacebar to exit"
+
+#define END_GAME                "Game Over!"
+#define LEN_END_GAME            10
+#define YOUR_SCORE              "Your score is "
+#define LEN_YOUR_SCORE          14
 #endif
