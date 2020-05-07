@@ -9,6 +9,8 @@
 #include <ncurses.h>
 #include <string>
 #include <sstream>
+#include <iostream>
+
 using namespace std;
 
 const string DEBUGWINDOW = "DEBUG WINDOW";

@@ -6,6 +6,17 @@
                 "initializer_list": "cpp",
                 "utility": "cpp",
                 "iostream": "cpp",
-                "vector": "cpp"
-        }
+                "vector": "cpp",
+                "algorithm": "cpp",
+                "iosfwd": "cpp",
+                "string": "cpp",
+                "bitset": "cpp",
+                "__bit_reference": "cpp",
+                "__hash_table": "cpp",
+                "__split_buffer": "cpp",
+                "iterator": "cpp",
+                "list": "cpp",
+                "unordered_map": "cpp"
+        },
+        "C_Cpp.default.includePath": ["/Volumes/Tank/prog/include"]
 }

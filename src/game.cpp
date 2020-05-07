@@ -44,10 +44,10 @@ void generateGameBoard(int board[BOARD_HEIGHT][BOARD_WIDTH])
 string gameboardToString(int board[BOARD_HEIGHT][BOARD_WIDTH], int xmax)
 {
         string output = "";
-        string spaces((xmax-BOARD_WIDTH)/2, ' ');
+        // string spaces((xmax-BOARD_WIDTH)/2, ' ');
         for (int i = 0; i < BOARD_HEIGHT; ++i)
         {
-                output += " " + spaces;
+                output;
                 for (int j = 0; j < BOARD_WIDTH; ++j)
                 {
                         output += to_string(board[i][j]);
@@ -56,7 +56,6 @@ string gameboardToString(int board[BOARD_HEIGHT][BOARD_WIDTH], int xmax)
         }
         return output;
 }
-
 
 void addShapeToGameBoard(vector< vector<int> > blockMatrix, int posy, int posx, int board[BOARD_HEIGHT][BOARD_WIDTH])
 {

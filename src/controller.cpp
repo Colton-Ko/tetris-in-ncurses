@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 void drawBox(WINDOW * win)
 {
@@ -62,8 +63,7 @@ void printInstructionWindow(WINDOW * iwin, int xmax)
 	wrefresh(iwin);
 }
 
-
-void drawBlockMatrix(WINDOW * twin, int posy, int posx, vector< vector<int> > blockMatrix)
+void drawGameBoard(WINDOW * twin, int posy, int posx, vector < vector<int> > blockMatrix)
 {
 	for (int i = 0; i < blockMatrix.size(); i++)			// For each ysize
 	{
@@ -72,7 +72,7 @@ void drawBlockMatrix(WINDOW * twin, int posy, int posx, vector< vector<int> > bl
 			if (blockMatrix[i][j])
 			{
 				wattron(twin, 0);
-				mvwprintw(twin, i+posy, posx+j, "##");
+				mvwprintw(twin, i+posy, posx+j, "#");
 				wattroff(twin, 0);
 			}
 				
@@ -84,13 +84,13 @@ void drawBlockMatrix(WINDOW * twin, int posy, int posx, vector< vector<int> > bl
 
 void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 {	
-	init_pair(0, COLOR_WHITE, COLOR_WHITE);
 	// Spawn block
 	string blocks[BLOCK_SHAPE_COUNT];
 	string currentBlock = spawnNewBlock();
 	int rotation = 0;
 	int blocksCount = 1;
-	block currentBlockObj;
+	block currentBlockObj = blockStringToBlockObj(rotateBlock(rotation, currentBlock));
+	block tempBlockObj;
 	vector< vector<int> > blockMatrix;
 
         // Generate gameboard
@@ -98,7 +98,7 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
         int board[BOARD_HEIGHT][BOARD_WIDTH];
         generateGameBoard(board);
 
-	int posx = (xmax-4)/2, posy = 1;
+	int posx = (xmax-currentBlockObj.xsize)/2, posy = 0;
 
 	while (true)
 	{
@@ -106,41 +106,54 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 		clearOldBlocks(twin, posx, posy);
 		clearShapeOnBoard(blocksCount, board);
 
-		currentBlockObj = blockStringToBlockObj(rotateBlock(rotation, currentBlock));
-		blockMatrix = shapeStringToArray(currentBlockObj.content, blocksCount, currentBlockObj.ysize, currentBlockObj.xsize);
+		wmove(iwin, 19, 0);
+		wclrtoeol(iwin);
+		wmove(iwin, 20, 0);
+		wclrtoeol(iwin);
 
 		switch (x)
 		{
 			case W_KEY:
-				rotation = (rotation + 1) % 4;
-				mvwprintw(iwin, 15, (xmax-1)/2, 
-					to_string(rotation).c_str());
+				tempBlockObj = blockStringToBlockObj(rotateBlock((rotation + 1) % 4, currentBlock));
+				if (posx + tempBlockObj.xsize < BOARD_WIDTH && posy + tempBlockObj.ysize < BOARD_HEIGHT && posx > tempBlockObj.xsize)
+				{
+					rotation = (rotation + 1) % 4;
+				}
+				mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
+				mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + tempBlockObj.xsize) + " " + to_string(posy + tempBlockObj.ysize)).c_str());
+				mvwprintw(iwin, 15, (xmax-1)/2, to_string(rotation).c_str());
 				mvwprintw(iwin, 14, (xmax-1)/2, "W");
-
 				break;
+
 			case A_KEY:
-				if (posx > 1)
+				if (posx - 1 > 0)					// Prevent going out of bonds
 					posx -= 1;
 				mvwprintw(iwin, 14, (xmax-1)/2, "A");
+				mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
+				mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
 				break;
+
 			case S_KEY:
-				if (posy < TWIN_HEIGHT-5)
+				if (posy + currentBlockObj.ysize + 1 < BOARD_HEIGHT)	// Prevent going out of bonds
 					posy += 1;
 				mvwprintw(iwin, 14, (xmax-1)/2, "S");
+				mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
+				mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
 				break;
 			case D_KEY:
-				if (posx < TWIN_WIDTH-5)
+				if (posx + 1 + currentBlockObj.xsize < BOARD_WIDTH+1)
 					posx += 1;
 				mvwprintw(iwin, 14, (xmax-1)/2, "D");
+				mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
+				mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
 				break;								
 		}
-
-		drawBlockMatrix(twin, posy, posx, blockMatrix);
-		// posy is same as position y on twin
-		// posx is 0.5x as in twin, because scale x : scale y = 1:2
-		addShapeToGameBoard(blockMatrix, posy, posx/2, board);
+		currentBlockObj = blockStringToBlockObj(rotateBlock(rotation % 4, currentBlock));
+		blockMatrix = blockObjContToMatrix(currentBlockObj, blocksCount);
+		addShapeToGameBoard(blockMatrix, posy, posx, board);
+		drawGameBoard(twin, posy, posx, blockMatrix);
 		updateDebug(board, dwin);
-		drawBox(iwin);
+		box(iwin, 0, 0);
 		wrefresh(iwin);
 	}
 }
@@ -149,9 +162,8 @@ void game_init()
 {
 	initscr();      					// Initialize screen
 	srand(time(NULL));					// Initialize random seed
-
-	use_default_colors();
 	start_color();						// Full black background
+	init_pair(WHITE_BACKGROUND, COLOR_WHITE, COLOR_WHITE);
 	curs_set(0);    					// Hide cursor
 	noecho();						// No echo (@echo off)
 	

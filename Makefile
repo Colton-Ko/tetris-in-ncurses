@@ -11,7 +11,10 @@ clean:
 	rm -rfv local/
 	rm -rfv ncurses/
 	rm -rfv bin/*.o
-	
+
+test:
+	g++ test/unit-blockToBlockMatrix.cpp -I include -I local/include/ncursestw -I local/include -L local/lib -lncursestw -o test/a.out && cd test && ./a.out
+
 ncurses:
 	chmod +x buildncurses.sh
 	./buildncurses.sh

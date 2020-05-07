@@ -11,10 +11,18 @@ const char DELETE_CHAR = 'X';
 
 struct block
 {
-    int ysize = 0;
-    int xsize = 0;
-    string content = "";  
+    int ysize;
+    int xsize;
+    string content;
 };
+
+#define SHAPE_0                 "..#...#...#...#."
+#define SHAPE_1                 ".##..#...#......"
+#define SHAPE_2                 ".#...#...##....."
+#define SHAPE_3                 "..#..##..#......"
+#define SHAPE_4                 ".#...##...#....."
+#define SHAPE_5                 ".....##..##....."
+#define SHAPE_6                 ".#...##..#......"
 
 
 void printShapeString(string shapeString, int ysize, int xsize)

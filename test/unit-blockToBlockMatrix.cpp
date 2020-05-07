@@ -1,77 +1,45 @@
-#include "tetris/blocks.h"
-#include "tetris/controller.h"
-#include "tetris/game.h"
-#include "tetris/debug.h"
-#include "tetris/options.h"
-#include "tetris/constants.h"
-#include "tetris/types.h"
 
-#include <ncurses.h>
-#include <string>
 #include <iostream>
+#include <string>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
+const int BLOCK_WIDTH = 4;
+const string BLOCK_EMPTY_LINE = "....";
+const char DELETE_CHAR = 'X';
+const char BLOCK_WIDTH_SQR = 16;
+const char OCCUPIED = '#';
 
-
-void getBlocksReady(string blocks[BLOCK_SHAPE_COUNT])
+struct block
 {
-	// Clear all exisitng garabge in blocks[7]
-	for (int i = 0; i < BLOCK_SHAPE_COUNT; ++i)
-	{
-		blocks[i] = "";
-	}
-	// Create blocks
-	// The blocks arrangements and implementation ideas 
-	// are from https://youtu.be/8OK8_tHeCIA
+    int ysize;
+    int xsize;
+    string content;  
+};
 
-	blocks[0] = SHAPE_0;
-	blocks[1] = SHAPE_1;
-	blocks[2] = SHAPE_2;
-	blocks[3] = SHAPE_3;
-	blocks[4] = SHAPE_4;
-	blocks[5] = SHAPE_5;
-	blocks[6] = SHAPE_6;
-
+void printBlockMatrix(vector< vector<int> > blockMatrix)
+{
+        vector<int> row;
+        for (int i = 0; i < blockMatrix.size(); ++i)
+        {
+                row = blockMatrix[i];
+                for (int j = 0; j < row.size(); ++j)
+                {
+                        cout << row[j];
+                }
+                cout << endl;
+        }
 }
 
-// The idea of implementing rotation through index functions
-// are from https://youtu.be/8OK8_tHeCIA
-
-int rotateBlock(int i, int mode)
+void printVector(vector<int> row)
 {
-	switch (mode)
-	{
-		case 0:
-			i = i;
-			break;
-		case 1:  // 90 degrees
-			i = 12 - 4*(i % 4) + (i / 4);
-			break;
-		case 2: // 180 degrees
-			i = 15 - 4*(i / 4) - (i % 4);
-			break;
-		case 3: // 270 degrees
-			i = 3 + 4*( i % 4) - (i / 4);
-		default:
-			break;
-	}
-	return i;
+        for (int i = 0; i < row.size(); ++i)
+        {
+                cout << row[i];
+        }
+        cout << endl;
 }
 
-string rotateBlock(int i, string blockContent)
-{
-	string output = "";
-	for ( int j = 0; j < BLOCK_WIDTH_SQR; ++j)
-	{
-		if (isprint(blockContent[j]))
-			output += blockContent[rotateBlock(j,i)];
-	}
-	return output;
-}
-
-// Converts the shapeString to integer array to be embedded
 vector< vector<int> > blockObjContToMatrix(block blockShape, int n)
 {
         vector< vector<int> > blockMatrix;
@@ -81,11 +49,12 @@ vector< vector<int> > blockObjContToMatrix(block blockShape, int n)
         {
                 for (int j = 0; j < blockShape.xsize; ++j)
                 {
-                        if (blockShape.content.substr(i*blockShape.xsize,blockShape.xsize)[j] == OCCUPIED_CHAR)
+                        if (blockShape.content.substr(i*blockShape.xsize,blockShape.xsize)[j] == OCCUPIED)
                                 row.push_back(n);
                         else
                                 row.push_back(0);                
                 }
+
                 blockMatrix.push_back(row);
                 row.clear();
         }
@@ -147,4 +116,24 @@ block blockStringToBlockObj(string shapeString)
     result.content = output;
 
     return result;
+}
+
+void printBlockString(string blockString, int ysize, int xsize)
+{
+        for (int i = 0; i < ysize; ++i)
+        {
+                cout << blockString.substr(i*xsize,xsize) << endl;
+        }
+}
+
+int main()
+{
+        string blockString = "";
+        cout << "Give me blockString!" << endl;
+        cin >> blockString;
+        block cb = blockStringToBlockObj(blockString);
+        cout << "Block String: " << cb.content  << " dy, dx = " << cb.ysize << " " << cb.xsize << endl;
+        printBlockString(cb.content, cb.ysize, cb.xsize);
+        vector< vector<int> > blockMatrix = blockObjContToMatrix(cb, 1);
+        printBlockMatrix(blockMatrix);
 }
