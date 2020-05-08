@@ -1,3 +1,22 @@
+/*
+        HKU ENGG 1340 Programming and technologies
+        Group 140 (2019-2020 2nd Semester)
+
+        AUTHOR
+        TAM CHUN KIT            (3035686554)
+        CHOW NAM FUNG           (3035712767)
+
+        DATE
+        2020-05-08
+
+        FILENAME
+        game.h
+
+        VIEW
+                Tabsize:        8
+                Indentation:    Space
+                
+*/
 #ifndef GAME_H
 #define GAME_H
 
@@ -8,14 +27,19 @@
 
 using namespace std;
 
-string spawnNewBlockString();
+// Returns a random bonded by 0 and max.
 int randomInteger(int max);
 
+// Return a string which contained a block description
+string spawnNewBlockString();
+
+// Sets the cell content of a 2D integer array of size BOARD_HEIGHT x BOARD_WIDTH to zero.
 void generateGameBoard
 (
         int board[BOARD_HEIGHT][BOARD_WIDTH]
 );
 
+// Returns a string converted from a 2D integer array of size BOARD_HEIGHT x BOARD_WIDTH
 string gameboardToString
 (
         int board[BOARD_HEIGHT][BOARD_WIDTH], 
@@ -32,28 +56,13 @@ bool addShapeToGameBoard
         int blockNum
 );
 
-blockMatrix shapeStringToArray
-(
-        string shapeString, 
-        int blockNum, 
-        int ysize, 
-        int xsize
-);
-
+// Set every cell with content of blockNum to zero in a 2D integer array (typically board)
 void clearShapeOnBoard(
         int blockNum, 
         int board[BOARD_HEIGHT][BOARD_WIDTH]
 );
 
-bool isTheMoveValid
-(
-        int dy, 
-        int dx, 
-        int posy, 
-        int posx, 
-        block blockShape
-);
-
+// Returns true if the rotation causes block placement conflicts. 
 bool isCollidedWithAnotherBlock
 (
         blockMatrix currentBlockMatrix, 
@@ -63,6 +72,7 @@ bool isCollidedWithAnotherBlock
         int board[BOARD_HEIGHT][BOARD_WIDTH]
 );
 
+// Used by requestRotate()
 // Validates whether a rotation is valid. Replace &rotation with next rotation if valid.
 void requestRotate
 (

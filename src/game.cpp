@@ -7,18 +7,29 @@
         CHOW NAM FUNG           (3035712767)
 
         DATE
-        2020-05-07
+                2020-05-07
 
         FILENAME
-        controller.cpp
+                controller.cpp
 
         REFERENCES
-	This piece of code has direct references to these sources
+
+	        This piece of code has direct references to these sources
                 - https://stackoverflow.com/questions/23970721/how-to-shift-2d-array-elements-down-in-c
 
         VIEW
                 Tabsize:        8
                 Indentation:    Space
+
+
+        PURPOSE
+
+                This file is responsible for handling the following game events
+
+                1.      User Key Down for block movement
+                2.      Adding and removing shapes from gameBoard
+                3.      Checking whether block collision occurs
+
 */
 
 #include "tetris/blocks.h"
@@ -42,12 +53,14 @@
 
 using namespace std;
 
+// Returns a integer randomly bonded by 0 and max.
 int randomInteger(int max)
 {
         int x = rand() % max;
 	return x;
 }
 
+// Return a string which contained a block description
 string spawnNewBlockString()
 {
         string blocks[BLOCK_SHAPE_COUNT];
@@ -56,6 +69,7 @@ string spawnNewBlockString()
         return rotateBlock(randomInteger(ROTATIONS), blocks[randomInteger(BLOCK_SHAPE_COUNT)]);
 }
 
+// Sets the cell content of a 2D integer array of size BOARD_HEIGHT x BOARD_WIDTH to zero.
 void generateGameBoard(int board[BOARD_HEIGHT][BOARD_WIDTH])
 {
         for (int i = 0; i < Y_UPPER_BOUNDARY; ++i)
@@ -67,10 +81,10 @@ void generateGameBoard(int board[BOARD_HEIGHT][BOARD_WIDTH])
         }
 }
 
+// Returns a string converted from a 2D integer array of size BOARD_HEIGHT x BOARD_WIDTH
 string gameboardToString(int board[BOARD_HEIGHT][BOARD_WIDTH], int xmax)
 {
         string output = "";
-        // string spaces((xmax-BOARD_WIDTH)/2, ' ');
         for (int i = 0; i < BOARD_HEIGHT; ++i)
         {
                 output;
@@ -110,6 +124,7 @@ bool addShapeToGameBoard(blockMatrix bMatrix, int posy, int posx, int board[BOAR
         return isMerged;
 }
 
+// Set every cell with content of blockNum to zero in a 2D integer array (typically board)
 void clearShapeOnBoard(int blockNum, int board[BOARD_HEIGHT][BOARD_WIDTH])
 {
         // STEP 1: Run through the whole block and find all cells with same blockNumber
@@ -129,6 +144,7 @@ void clearShapeOnBoard(int blockNum, int board[BOARD_HEIGHT][BOARD_WIDTH])
         }
 }
 
+// Used by isCollidedWithAnotherBlock()
 // Make a copy of a game board
 void copyGameBoard(int src[BOARD_HEIGHT][BOARD_WIDTH], int dest[BOARD_HEIGHT][BOARD_WIDTH])
 {
@@ -141,6 +157,8 @@ void copyGameBoard(int src[BOARD_HEIGHT][BOARD_WIDTH], int dest[BOARD_HEIGHT][BO
         }
 }
 
+// Used by isCollidedWithAnotherBlock()
+// Return true if an adjecent block in different blockNum is found, else return false.
 bool findUnequalAdjecentBlockNumber(int blockNum, int dy, int dx, int augmentedBoard[BOARD_HEIGHT][BOARD_WIDTH])
 {
         int adjecentCellData = 0;
@@ -176,7 +194,7 @@ bool findUnequalAdjecentBlockNumber(int blockNum, int dy, int dx, int augmentedB
         return false;                                                   // None satisified -> Not collided
 }
 
-// Check whether a collision occurs with another block
+// Returns true if the rotation causes block placement conflicts. 
 bool isCollidedWithAnotherBlock(blockMatrix currentBlockMatrix, int posy, int posx, int blockNum, int board[BOARD_HEIGHT][BOARD_WIDTH], int direction)
 {
         // Duplicate the board, we use that for "simulation"
@@ -204,6 +222,7 @@ bool isCollidedWithAnotherBlock(blockMatrix currentBlockMatrix, int posy, int po
         return false;
 }
 
+// Used by requestRotate()
 // Checks whether a rotation is legit in a gameboard. Returns true if rotation is valid.
 bool isRotationValid(block tempBlockObj, int posy, int posx, int blockNum, int board[BOARD_HEIGHT][BOARD_WIDTH])
 {
@@ -228,6 +247,18 @@ bool isRotationValid(block tempBlockObj, int posy, int posx, int blockNum, int b
 
 }
 
+// Block movements
+// Validates whether a rotation is valid. Replace &rotation with next rotation if valid.
+void requestRotate(block tempBlockObj, int &rotation, int posy, int posx, int blockNum, int board[BOARD_HEIGHT][BOARD_WIDTH])
+{
+        if (posx + tempBlockObj.xsize < X_UPPER_BOUNDARY && posy + tempBlockObj.ysize < Y_UPPER_BOUNDARY && posx > tempBlockObj.xsize)
+        {
+                if (isRotationValid(tempBlockObj, posy, posx, blockNum, board))
+                        rotation = (rotation + 1) % ROTATIONS;
+        }
+}
+
+// Block movements
 // Validates whether a right move is valid. Increment &posx if valid.
 void requestMoveRight
 (
@@ -250,6 +281,7 @@ void requestMoveRight
                 
 }
 
+// Block movements
 // Validates whether a left move is valid. Decrement &posx if valid.
 void requestMoveLeft
 (
@@ -292,16 +324,6 @@ bool requestMoveDown
         }
         // Reached the buttom
         return false;
-}
-
-// Validates whether a rotation is valid. Replace &rotation with next rotation if valid.
-void requestRotate(block tempBlockObj, int &rotation, int posy, int posx, int blockNum, int board[BOARD_HEIGHT][BOARD_WIDTH])
-{
-        if (posx + tempBlockObj.xsize < X_UPPER_BOUNDARY && posy + tempBlockObj.ysize < Y_UPPER_BOUNDARY && posx > tempBlockObj.xsize)
-        {
-                if (isRotationValid(tempBlockObj, posy, posx, blockNum, board))
-                        rotation = (rotation + 1) % ROTATIONS;
-        }
 }
 
 // Look for a consecutive filled line to clear. Returns posy of that line if found. Return -1 if not found.
