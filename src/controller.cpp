@@ -220,7 +220,7 @@ void startGame(int ymax, int xmax)
         int gameTicksOver       = 0             ;       // Related to gamespeed
         int level               = INITIAL_LEVEL ;       // The higher the level, the faster the game
         bool forceDown          = false         ;       // Whether a "gravity" pulls a block downward
-        bool spawnNew           = false         ;       // Whether a new block needs to be spawned
+        bool spawnNew           = true          ;       // Whether a new block needs to be spawned
         int lineToClear         = -1            ;       // The line number in board to clear
         int linesCleared        = 0             ;       // Number of lines cleared (~= Score)
         int posx                = 0             ;       // X coordinate of block
