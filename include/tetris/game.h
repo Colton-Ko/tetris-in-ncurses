@@ -8,7 +8,7 @@
 
 using namespace std;
 
-string spawnNewBlock();
+string spawnNewBlockString();
 int randomInteger(int max);
 
 void generateGameBoard

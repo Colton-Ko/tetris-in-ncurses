@@ -72,7 +72,7 @@ vector< vector<int> > shapeStringToArray(string shapeString, int blockNum, int y
 }
 
 
-block blockStringToBlockObj(string shapeString)
+block convertBlockStringToBlockObj(string shapeString)
 {
     int xsize = BLOCK_WIDTH, ysize = BLOCK_WIDTH;
     string temp = "";               //  Temporary string for checking
@@ -136,7 +136,7 @@ int main()
     cout << "Give me a string! > ";
     cin >> y;
 
-    block result = blockStringToBlockObj(y);
+    block result = convertBlockStringToBlockObj(y);
 
     printShapeString(result.content, result.ysize, result.xsize);
 

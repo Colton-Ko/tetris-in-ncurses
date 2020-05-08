@@ -1,6 +1,8 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H 
 
+#include "tetris/options.h"
+
 #define GAMEINFO                "GAME RULES"
 #define TWIN_HEIGHT             24
 #define TWIN_WIDTH              23
@@ -13,6 +15,12 @@
 
 #define BOARD_HEIGHT            22
 #define BOARD_WIDTH             20
+
+#if USE_1x2_BLOCK == 1
+    #undef BOARD_WIDTH
+    #define BOARD_WIDTH         10
+    #define DRAW_WIDTH          20
+#endif
 
 #define W_KEY                   119
 #define A_KEY                   97
@@ -40,7 +48,6 @@
 
 #define DELETE_CHAR             'X'
 
-#define WHITE_BACKGROUND        1
 #define EMPTY_BLOCK_NUM         0
 #define X_PADDING               1
 #define Y_PADDING               1
@@ -70,4 +77,13 @@
 #define LEN_END_GAME            10
 #define YOUR_SCORE              "Your score is "
 #define LEN_YOUR_SCORE          14
+
+#define RED_BACKGROUND          2
+#define YELLOW_BACKGROUND       3
+#define GREEN_BACKGROUND        4
+#define CYAN_BACKGROUND         5
+#define BLUE_BACKGROUND         6
+#define MAGENTA_BACKGROUND      7
+#define WHITE_BACKGROUND        1
+
 #endif

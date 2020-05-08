@@ -43,19 +43,6 @@ WINDOW * twin;
 WINDOW * iwin;
 WINDOW * dwin;
 
-void drawBox(WINDOW * win)
-{
-        box(win, 0, 0);                                                // Draw outline box
-        wrefresh(win);
-}
-
-void clearScreen(WINDOW * window, int posx, int posy)
-{
-        wclear(window);
-        drawBox(window);
-}
-
-
 void exitOnSmallTerminal(int ymax, int xmax)
 {
         // If you have a VT-80 terminal you can run this game
@@ -68,14 +55,14 @@ void exitOnSmallTerminal(int ymax, int xmax)
         exit(1);                                                        // Leave game due to insufficent space to draw game window
 }
 
-void printScore(WINDOW * iwin, int xmax, int score)
+void printScore(int xmax, int score)
 {
         string strscore = to_string(score);                             // Convert integer score to std::string
         mvwprintw(iwin,11, (xmax-strscore.size())/2,
                 strscore.c_str());                                      // Place in middle
 }
 
-void printInstructionWindow(WINDOW * iwin, int xmax)
+void printInstructionWindow(int xmax)
 {
         // Prints the instruction window 
         mvwprintw(iwin, 1, (xmax-12)/2 ,"TETRIS GAME");                 // 1st line: Game Title
@@ -89,58 +76,168 @@ void printInstructionWindow(WINDOW * iwin, int xmax)
         mvwprintw(iwin, 10, 2, "SCORE");                                // Show score
         mvwprintw(iwin, 11, (xmax-1)/2, "0");                           // Initialization score is 0
 
-        drawBox(iwin);
+        box(iwin, 0, 0);
         wrefresh(iwin);
 }
 
-void drawFromGameBoard(WINDOW * twin, int board[BOARD_HEIGHT][BOARD_WIDTH])
+void drawFromGameBoard(int board[BOARD_HEIGHT][BOARD_WIDTH])
 {
+        #if USE_1x2_BLOCK == 1
+        if (USE_1x2_BLOCK)                              // If instructed to use 1x2 drawing mode, y=1, x=2
+        {
+                int visual[BOARD_HEIGHT][DRAW_WIDTH];   // Copy array first
+
+                for (int i = 0; i < BOARD_HEIGHT; ++i)
+                {
+                        for (int j = 0; j < BOARD_WIDTH; ++j)
+                        {
+                                visual[i][2*j] = board[i][j];
+                                visual[i][2*j+1] = board[i][j];
+                        }
+                        for (int j = 0; j < DRAW_WIDTH; ++j)
+                        {
+                                if (visual[i][j])
+                                {
+                                wattron(twin, COLOR_PAIR(visual[i][j] % BLOCK_SHAPE_COUNT + 1));        // Enable printing a whole block "beautifully :) with colors"
+                                mvwprintw(twin, i + X_PADDING, j + Y_PADDING, "#");                     // Full block just for this line
+                                wattroff(twin, COLOR_PAIR(visual[i][j] % BLOCK_SHAPE_COUNT + 1));       // Turn off that beautify thing
+                                }
+                        }
+                }
+                wrefresh(twin);
+                return;
+        }
+        #endif
+
         for (int i = 0; i < BOARD_HEIGHT; ++i)
         {
                 for (int j = 0; j < BOARD_WIDTH; ++j)
                 {
                         if (board[i][j])
                         {
-                                wattron(twin, COLOR_PAIR(WHITE_BACKGROUND));                    // Enable printing a whole block "beautifully :)"
-                                mvwprintw(twin, i + X_PADDING, j + Y_PADDING, "#");             // Full block just for this line
-                                wattroff(twin, COLOR_PAIR(WHITE_BACKGROUND));                   // Turn off that beautify thing
+                                wattron(twin, COLOR_PAIR(board[i][j] % BLOCK_SHAPE_COUNT + 1));         // Enable printing a whole block "beautifully :) with colors"
+                                mvwprintw(twin, i + X_PADDING, j + Y_PADDING, "#");                     // Full block just for this line
+                                wattroff(twin, COLOR_PAIR(board[i][j] % BLOCK_SHAPE_COUNT + 1));        // Turn off that beautify thing
                         }
                 }
         }
         wrefresh(twin);
 }
 
-void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
+void resetPosition(int &posy, int &posx, block cb, int xmax)
+{
+        posy = 0;
+        if (USE_1x2_BLOCK)
+                posx = (xmax/2-cb.xsize/2)/2;
+        else
+                posx = (xmax-cb.xsize/2)/2;
+}
+
+void updateScore(int linesCleared, int xmax)
+{
+        mvwprintw(
+                                iwin, 
+                                11, 
+                                (xmax - to_string(linesCleared).length())/2, 
+                                to_string(linesCleared).c_str());
+}
+
+void spawnNewBlock(string &currentBlock, block &currentBlockObj, blockMatrix &bMatrix, int rotation, int blocksCount)
+{
+        currentBlock = spawnNewBlockString();                                   // Spawn new block and put in currentBlock (blockString)
+        currentBlockObj = 
+                 convertBlockStringToBlockObj(rotateBlock(rotation % 4, currentBlock)); // Update currentBlockObj
+        bMatrix = convertToBlockMatrix(currentBlockObj, blocksCount);           // Convert to blockMatrix
+}
+
+void handleGameOver(int linesCleared, int ymax, int xmax)
+{
+        // Show game over
+        werase(twin);
+        werase(iwin);
+        werase(dwin);
+
+        wrefresh(twin);
+        wrefresh(iwin);
+        wrefresh(dwin);
+
+        getmaxyx(stdscr, ymax, xmax);
+
+        string score (YOUR_SCORE);
+        score += to_string(linesCleared);
+
+        string exitEnter (EXIT_ENTER_KEY);
+
+        clear();
+
+        mvprintw(ymax/2-1, (xmax-LEN_END_GAME)/2 , END_GAME);
+        mvprintw(ymax/2, (xmax-score.length())/2 , score.c_str());
+        mvprintw(ymax/2+1, (xmax-exitEnter.length())/2 , exitEnter.c_str());
+
+        nodelay(stdscr, false);
+        refresh();
+
+        while(getch() != ' ')
+        {
+                clear();
+
+                mvprintw(ymax/2-1, (xmax-LEN_END_GAME)/2 , END_GAME);
+                mvprintw(ymax/2, (xmax-score.length())/2 , score.c_str());
+                mvprintw(ymax/2+1, (xmax-exitEnter.length())/2 , exitEnter.c_str());
+
+                nodelay(stdscr, false);
+                refresh();
+        }
+
+        endwin();
+        exit(0);
+}
+
+void doTick()
+{
+        this_thread::sleep_for(chrono::milliseconds(TIME_PER_TICK));
+}
+
+void cleanTetrisScreenBuffer()
+{
+        werase(twin);                                                           // Clear TWIN window
+        box(twin, 0, 0);                                                        // Redraw the boarder
+}
+
+void startGame(int ymax, int xmax)
 {        
-        // Spawn block
+        // Spawn blocks
         string blocks[BLOCK_SHAPE_COUNT];
-        string currentBlock = spawnNewBlock();
+        string currentBlock = spawnNewBlockString();
 
         // Declare variables
-        int rotation = 0;                               // Stores Rotation angle, where angle = 90*rotation
+        int rotation    = 0;                            // Stores Rotation angle, where angle = 90*rotation
         int blocksCount = 1;                            // Acts as the block Number
         block currentBlockObj;                          // Current blockObject/ blockShape
         block tempBlockObj;                             // Temporary block object
-        vector< vector<int> > blockMatrix;              // 2D vector for storing the matrix verison of blockShape
+        blockMatrix bMatrix;                            // 2D vector for storing the matrix verison of blockShape
 
-        int gameTicksOver = 0;
-        int level = INITIAL_LEVEL;
-        bool forceDown = false;
-        bool spawnNew = false;
-        int lineToClear = -1;
-        int linesCleared = 0;
+        int gameTicksOver       = 0             ;       // Related to gamespeed
+        int level               = INITIAL_LEVEL ;       // The higher the level, the faster the game
+        bool forceDown          = false         ;       // Whether a "gravity" pulls a block downward
+        bool spawnNew           = false         ;       // Whether a new block needs to be spawned
+        int lineToClear         = -1            ;       // The line number in board to clear
+        int linesCleared        = 0             ;       // Number of lines cleared (~= Score)
+        int posx                = 0             ;       // X coordinate of block
+        int posy                = 0             ;       // Y coordinate of block
 
-        // Generate gameboard                        
-        string boardStr = "";                        
-        int board[BOARD_HEIGHT][BOARD_WIDTH];        
-        generateGameBoard(board);                
+        string boardStr         = ""            ;       // String representation of block
 
-        int posx = (xmax-currentBlockObj.xsize)/2, posy = 0;
+        // Create board Array (2D)
+        int board[BOARD_HEIGHT][BOARD_WIDTH];    
+
+        generateGameBoard(board);                               // Fill with zeros
+        resetPosition(posy, posx, currentBlockObj, xmax);       // Reset posy posx
 
         // Another thread is for moving block down every interval
         while (true)
         {
-                mvwprintw(dwin, 5, 13, to_string(blocksCount).c_str());
+
                 if (spawnNew)
                 {
                         spawnNew = false;                                                       // Turn that flag off incase I forgot
@@ -155,138 +252,79 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
                         }
 
                         // Update score
-                        mvwprintw(
-                                iwin, 
-                                11, 
-                                (xmax - to_string(linesCleared).length())/2, 
-                                to_string(linesCleared).c_str());
+                        updateScore(linesCleared, xmax);
 
                         // Spawn new block
                         blocksCount += 1;                                                       // Increment blockNum to lock existing blocks
-                        currentBlockObj = 
-                                blockStringToBlockObj(rotateBlock(rotation % 4, currentBlock)); // Update currentBlockObj
-                        currentBlock = spawnNewBlock();                                         // Spawn new block and put in currentBlock (blockString)
-                        blockMatrix = blockObjContToMatrix(currentBlockObj, blocksCount);       // Convert to blockMatrix
+                        spawnNewBlock
+                        (
+                                currentBlock, 
+                                currentBlockObj, 
+                                bMatrix, 
+                                rotation, 
+                                blocksCount
+                        );
 
-                        posy = 0;
-                        posx = (xmax-currentBlockObj.xsize)/2;
+                        // Reset posx posy
+                        resetPosition(posy, posx, currentBlockObj, xmax);
 
                         // Check Whether new block is spawned valid
                         if (!requestMoveDown(
                                 currentBlockObj, 
                                 posy, 
                                 posx, 
-                                blockMatrix, 
+                                bMatrix, 
                                 blocksCount, 
-                                board))                                                         // If collided with block below
+                                board))                                                 // If collided with block below
                         {
-                                // Show game over
-                                wclear(twin);
-                                wclear(iwin);
-                                wclear(dwin);
-
-                                wrefresh(twin);
-                                wrefresh(iwin);
-                                wrefresh(dwin);
-
-                                getmaxyx(stdscr, ymax, xmax);
-
-                                string score (YOUR_SCORE);
-                                score += to_string(linesCleared);
-
-                                string exitEnter (EXIT_ENTER_KEY);
-
-                                clear();
-
-                                mvprintw(ymax/2-1, (xmax-LEN_END_GAME)/2 , END_GAME);
-                                mvprintw(ymax/2, (xmax-score.length())/2 , score.c_str());
-                                mvprintw(ymax/2+1, (xmax-exitEnter.length())/2 , exitEnter.c_str());
-
-                                nodelay(stdscr, false);
-                                refresh();
-
-                                while(getch() != ' ')
-                                {
-                                        clear();
-
-                                        mvprintw(ymax/2-1, (xmax-LEN_END_GAME)/2 , END_GAME);
-                                        mvprintw(ymax/2, (xmax-score.length())/2 , score.c_str());
-                                        mvprintw(ymax/2+1, (xmax-exitEnter.length())/2 , exitEnter.c_str());
-
-                                        nodelay(stdscr, false);
-                                        refresh();
-                                }
-
-                                endwin();
-                                exit(0);
+                                handleGameOver(linesCleared, ymax, xmax);
                         }
                 }
 
-                this_thread::sleep_for(chrono::milliseconds(TIME_PER_TICK));            // Game tick is for 50ms by default
+                doTick();                                                               // Game tick is for 50ms by default
                 gameTicksOver += 1;                                                     // Add 1 tick
                 
                 forceDown = (gameTicksOver == level);                                   // Level stores number of game tick for every force move down
 
                 char x = getch();                                                       // Get user's control from keyboard
-                clearScreen(twin, posx, posy);                                          // Clear TWIN window
+                cleanTetrisScreenBuffer();                                              // Clear Tetris Screen buffer
                 clearShapeOnBoard(blocksCount, board);                                  // Clear existing blockNum pieces in gameboard array
 
-                blockStringToBlockObj(rotateBlock(rotation, currentBlock));              // Convert spawnedNewBlock to block object
+                convertBlockStringToBlockObj(rotateBlock(rotation, currentBlock));             // Convert spawnedNewBlock to block object
 
                 switch (x)
                 {
                         case W_KEY:
-                                tempBlockObj = blockStringToBlockObj(rotateBlock((rotation + 1) % 4, currentBlock));
+                                tempBlockObj = convertBlockStringToBlockObj(rotateBlock((rotation + 1) % 4, currentBlock));
                                 requestRotate(tempBlockObj, rotation, posy, posx, blocksCount, board);
-                                // mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
-                                // mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + tempBlockObj.xsize) + " " + to_string(posy + tempBlockObj.ysize)).c_str());
-                                // mvwprintw(iwin, 15, (xmax-1)/2, to_string(rotation).c_str());
-                                // mvwprintw(iwin, 14, (xmax-1)/2, "W");
                                 break;
 
                         case A_KEY:
-                                requestMoveLeft(currentBlockObj, posy, posx, blockMatrix, blocksCount, board);
-                                // mvwprintw(iwin, 14, (xmax-1)/2, "A");
-                                // mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
-                                // mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
+                                requestMoveLeft(currentBlockObj, posy, posx, bMatrix, blocksCount, board);
                                 break;
 
                         case S_KEY:
-                                spawnNew = !requestMoveDown(currentBlockObj, posy, posx, blockMatrix, blocksCount, board);
-                                // mvwprintw(iwin, 14, (xmax-1)/2, "S");
-                                // mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
-                                // mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
+                                spawnNew = !requestMoveDown(currentBlockObj, posy, posx, bMatrix, blocksCount, board);
                                 break;
                         case D_KEY:
-                                requestMoveRight(currentBlockObj, posy, posx, blockMatrix, blocksCount, board);
-                                // mvwprintw(iwin, 14, (xmax-1)/2, "D");
-                                // mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
-                                // mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
+                                requestMoveRight(currentBlockObj, posy, posx, bMatrix, blocksCount, board);
                                 break;                                                                
                 }
 
                 if (forceDown)        // Reached number of ticks
                 {
                         gameTicksOver = 0;
-                        if (!requestMoveDown(currentBlockObj, posy, posx, blockMatrix, blocksCount, board))
-                        {
+                        if (!requestMoveDown(currentBlockObj, posy, posx, bMatrix, blocksCount, board))
                                 spawnNew = true;                                        // Lock in place by turning spawnNew flag
-                        }
-                        else                                                            // Can be moved down one block
-                        {                                                               // Nothing happened, everything just like normal
+                        else
                                 continue;
-                        }
-                        
-                        // mvwprintw(iwin, 14, (xmax-1)/2, "S");
-                        // mvwprintw(iwin, 19, (xmax-5)/2, (to_string(posx) + " " + to_string(posy)).c_str());
-                        // mvwprintw(iwin, 20, (xmax-5)/2, (to_string(posx + currentBlockObj.xsize) + " " + to_string(posy + currentBlockObj.ysize)).c_str());
                 }
 
-                currentBlockObj = blockStringToBlockObj(rotateBlock(rotation % 4, currentBlock));
-                blockMatrix = blockObjContToMatrix(currentBlockObj, blocksCount);
-                addShapeToGameBoard(blockMatrix, posy, posx, board, blocksCount);
-                drawFromGameBoard(twin, board);
-                updateDebug(board, dwin);
+                currentBlockObj = convertBlockStringToBlockObj(rotateBlock(rotation % 4, currentBlock));
+                bMatrix = convertToBlockMatrix(currentBlockObj, blocksCount);
+                addShapeToGameBoard(bMatrix, posy, posx, board, blocksCount);
+                drawFromGameBoard(board);
+                updateDebug(board);
                 box(iwin, 0, 0);
                 wrefresh(iwin);
         }
@@ -295,9 +333,17 @@ void startGame(WINDOW * twin, WINDOW * iwin, WINDOW * dwin, int ymax, int xmax)
 void game_init()
 {
         initscr();                                                      // Initialize screen
-        srand(time(NULL));                                              // Initialize random seed
+        srand(time(0));                                                 // Initialize random seed
         start_color();                                                  // Full black background
+        
+        init_pair(RED_BACKGROUND, COLOR_RED, COLOR_RED);
+        init_pair(YELLOW_BACKGROUND, COLOR_YELLOW, COLOR_YELLOW);
+        init_pair(GREEN_BACKGROUND, COLOR_GREEN, COLOR_GREEN);
+        init_pair(CYAN_BACKGROUND, COLOR_CYAN, COLOR_CYAN);
+        init_pair(BLUE_BACKGROUND, COLOR_BLUE, COLOR_BLUE);
+        init_pair(MAGENTA_BACKGROUND, COLOR_MAGENTA, COLOR_MAGENTA);
         init_pair(WHITE_BACKGROUND, COLOR_WHITE, COLOR_WHITE);
+
         curs_set(0);                                                    // Hide cursor
         noecho();                                                       // No echo (@echo off)
 
@@ -317,19 +363,25 @@ void game_init()
         
         refresh();
 
-        drawBox(twin);
-        drawBox(iwin);
-        
 
-        dwin = newwin(DWIN_HEIGHT, DWIN_WIDTH, 0,
-                        TWIN_WIDTH + IWIN_WIDTH);
+        box(twin, 0, 0);
+        box(iwin, 0, 0);
+
+        wrefresh(twin);
+        wrefresh(iwin);
+        
+        if (DEBUG)
+        {
+                dwin = newwin(DWIN_HEIGHT, DWIN_WIDTH, 0,
+                                TWIN_WIDTH + IWIN_WIDTH);
+        }
 
         refresh();
-        debugWindow(dwin);
+        debugWindow();
         
         getmaxyx(iwin, ymax, xmax);
-        printInstructionWindow(iwin, xmax);
-        startGame(twin, iwin, dwin, ymax, xmax);
+        printInstructionWindow(xmax);
+        startGame(ymax, xmax);
 
 }
 

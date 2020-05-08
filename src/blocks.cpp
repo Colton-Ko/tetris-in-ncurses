@@ -96,9 +96,9 @@ string rotateBlock(int rotation, string blockContent)
 }
 
 // Converts the shapeString to integer array to be embedded
-blockMatrix blockObjContToMatrix(block blockShape, int blockNum)
+blockMatrix convertToBlockMatrix(block blockShape, int blockNum)
 {
-        vector< vector<int> > blockMatrix;
+        blockMatrix bMatrix;
         vector<int> row;
 
         for (int i = 0; i  < blockShape.ysize; ++i)
@@ -110,13 +110,13 @@ blockMatrix blockObjContToMatrix(block blockShape, int blockNum)
                         else
                                 row.push_back(0);
                 }
-                blockMatrix.push_back(row);
+                bMatrix.push_back(row);
                 row.clear();
         }
-        return blockMatrix;
+        return bMatrix;
 }
 
-block blockStringToBlockObj(string shapeString)
+block convertBlockStringToBlockObj(string shapeString)
 {
 	int xsize = BLOCK_WIDTH, ysize = BLOCK_WIDTH;
 	string temp = "";               //  Temporary string for checking

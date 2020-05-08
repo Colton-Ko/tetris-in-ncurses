@@ -45,14 +45,10 @@ using namespace std;
 int randomInteger(int max)
 {
         int x = rand() % max;
-
-        // OVERRIDE
-        x = 0;
-
-        return x;
+	return x;
 }
 
-string spawnNewBlock()
+string spawnNewBlockString()
 {
         string blocks[BLOCK_SHAPE_COUNT];
         getBlocksReady(blocks);
@@ -181,7 +177,7 @@ bool findUnequalAdjecentBlockNumber(int blockNum, int dy, int dx, int augmentedB
 }
 
 // Check whether a collision occurs with another block
-bool isCollidedWithAnotherBlock(vector< vector<int> > currentBlockMatrix, int posy, int posx, int blockNum, int board[BOARD_HEIGHT][BOARD_WIDTH], int direction)
+bool isCollidedWithAnotherBlock(blockMatrix currentBlockMatrix, int posy, int posx, int blockNum, int board[BOARD_HEIGHT][BOARD_WIDTH], int direction)
 {
         // Duplicate the board, we use that for "simulation"
         int augmentedBoard[BOARD_HEIGHT][BOARD_WIDTH];
@@ -218,7 +214,7 @@ bool isRotationValid(block tempBlockObj, int posy, int posx, int blockNum, int b
         // 
         // After the above 3 steps, we can then conclude whether it is valid
 
-        blockMatrix matrix = blockObjContToMatrix(tempBlockObj, blockNum);      // Stpe 1
+        blockMatrix matrix = convertToBlockMatrix(tempBlockObj, blockNum);      // Stpe 1
 
         int augmentedBoard[BOARD_HEIGHT][BOARD_WIDTH];                          // Step 2A
         copyGameBoard(board, augmentedBoard);                                   // Step 2B
@@ -280,7 +276,7 @@ bool requestMoveDown
         block currentBlockObj,
         int &posy, 
         int posx, 
-        vector <vector <int> > currentBlockMatrix, 
+        blockMatrix currentBlockMatrix, 
         int blockNum, 
         int board[BOARD_HEIGHT][BOARD_WIDTH]
 )
@@ -328,8 +324,8 @@ int lookForFilledLine(int board[BOARD_HEIGHT][BOARD_WIDTH])
                         {
                                 accmul += 1;                            // Add counter by 1
                         }
-                        if (accmul == X_UPPER_BOUNDARY - X_PADDING)     // If the line is full-filled
-                        {
+                        if (accmul == X_UPPER_BOUNDARY - X_PADDING * USE_1x2_BLOCK)
+                        {                                               // If the line is full-filled
                                 return i;                               // Return that line number
                         }
                 }

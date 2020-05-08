@@ -15,7 +15,7 @@ using namespace std;
 
 const string DEBUGWINDOW = "DEBUG WINDOW";
 
-void debugWindow(WINDOW * dwin)
+void debugWindow()
 {
         if (!DEBUG)
         {
@@ -40,7 +40,7 @@ void debugWindow(WINDOW * dwin)
 
 }
 
-void updateDebug(int board[BOARD_HEIGHT][BOARD_WIDTH], WINDOW * dwin)
+void updateDebug(int board[BOARD_HEIGHT][BOARD_WIDTH])
 {
         if (!DEBUG)
         {

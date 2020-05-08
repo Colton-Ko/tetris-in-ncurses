@@ -11,6 +11,7 @@ const string BLOCK_EMPTY_LINE = "....";
 const char DELETE_CHAR = 'X';
 const char BLOCK_WIDTH_SQR = 16;
 const char OCCUPIED = '#';
+typedef vector< vector<int> > blockMatrix;
 
 struct block
 {
@@ -19,12 +20,12 @@ struct block
     string content;  
 };
 
-void printBlockMatrix(vector< vector<int> > blockMatrix)
+void printBlockMatrix(blockMatrix bMatrix)
 {
         vector<int> row;
-        for (int i = 0; i < blockMatrix.size(); ++i)
+        for (int i = 0; i < bMatrix.size(); ++i)
         {
-                row = blockMatrix[i];
+                row = bMatrix[i];
                 for (int j = 0; j < row.size(); ++j)
                 {
                         cout << row[j];
@@ -42,9 +43,9 @@ void printVector(vector<int> row)
         cout << endl;
 }
 
-vector< vector<int> > blockObjContToMatrix(block blockShape, int blockNum)
+blockMatrix blockObjContToMatrix(block blockShape, int blockNum)
 {
-        vector< vector<int> > blockMatrix;
+        blockMatrix bMatrix;
         vector<int> row;
 
         for (int i = 0; i  < blockShape.ysize; ++i)
@@ -52,15 +53,15 @@ vector< vector<int> > blockObjContToMatrix(block blockShape, int blockNum)
                 for (int j = 0; j < blockShape.xsize; ++j)
                 {
                         if (blockShape.content.substr(i*blockShape.xsize,blockShape.xsize)[j] == OCCUPIED)
-                                row.push_back(n);
+                                row.push_back(blockNum);
                         else
                                 row.push_back(0);                
                 }
 
-                blockMatrix.push_back(row);
+                bMatrix.push_back(row);
                 row.clear();
         }
-        return blockMatrix;
+        return bMatrix;
 }
 
 int rotateBlock(int i, int mode)
@@ -94,7 +95,7 @@ string rotateBlockStr(string block, int mode)
         return output;
 }
 
-block blockStringToBlockObj(string shapeString)
+block convertBlockStringToBlockObj(string shapeString)
 {
         int xsize = BLOCK_WIDTH, ysize = BLOCK_WIDTH;
         string temp = "";               //  Temporary string for checking
@@ -176,7 +177,7 @@ int main()
         {
 	        copyStr = rotateBlockStr(copyStr, i);
 	        cout << " OK! " << copyStr << endl;
-                cb = blockStringToBlockObj(copyStr);
+                cb = convertBlockStringToBlockObj(copyStr);
                 cout << "Block String: " << cb.content  << " dy, dx = " << cb.ysize << " " << cb.xsize << endl;
                 printBlockString(cb.content, cb.ysize, cb.xsize);
                 vector< vector<int> > blockMatrix = blockObjContToMatrix(cb, 1);

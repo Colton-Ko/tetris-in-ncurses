@@ -12,12 +12,11 @@ extern WINDOW * twin;
 extern WINDOW * iwin;
 extern WINDOW * dwin;
 
-void drawBox(WINDOW * win);
-void clearOldBlocks(WINDOW * window, int posx, int posy);
+void clearOldBlocks(int posx, int posy);
 void exitOnSmallTerminal(int ymax, int xmax);
-void printScore(WINDOW * iwin, int xmax, int score);
-void printInstructionWindow(WINDOW * iwin, int xmax);
-void drawBlockMatrix(WINDOW * twin, int posy, int posx, block currentBlock);
-void startGame(WINDOW * twin, WINDOW * iwin, int ymax, int xmax);
+void printScore(int xmax, int score);
+void printInstructionWindow(int xmax);
+void drawBlockMatrix(int posy, int posx, block currentBlock);
+void startGame(int ymax, int xmax);
 
 #endif

@@ -25,6 +25,3 @@ graph LR
 
 1. `void clearOldBlocks()`
    - Given a `WINDOW *`, it will clear the screen buffer at `posx`, `posy`.
-2. `void drawBox()`
-   - Given a `WINDOW * `, it will draw a box to make that `WINDOW` visible.
-3. 
