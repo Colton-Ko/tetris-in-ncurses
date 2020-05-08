@@ -15,6 +15,11 @@
         VIEW
                 Tabsize:        8
                 Indentation:    Space
+
+        PURPOSE
+
+        This file is for holding the flags for tuning the program behavior
+        
 */
 
 #ifndef OPTIONS_H

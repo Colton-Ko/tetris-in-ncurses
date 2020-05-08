@@ -10,15 +10,25 @@
         2020-05-07
 
         FILENAME
-        controller.cpp
+        controller.cpp          [MAIN FUNCTION IS DEFINED IN THIS FILE]
 
         REFERENCES
-        This piece of code has direct reference from 
+
+                This piece of code has direct reference from 
                 -       https://stackoverflow.com/questions/16909164/function-pointer-multiple-definition
 
         VIEW
                 Tabsize:        8
                 Indentation:    Space
+
+        PURPOSES
+
+                This is the ViewController for the game. It is responsible for the following.
+                1.      Passing game events to game logic part (game.cpp)
+                2.      Initializing ncurses Window
+                3.      Provision of User interface
+                4.      Hosting the main gameloop
+                5.      Provision of Entry point
 */
 
 #include "tetris/blocks.h"
@@ -39,10 +49,11 @@
 #include <thread>
 #include <chrono>
 
-WINDOW * twin;
-WINDOW * iwin;
-WINDOW * dwin;
+WINDOW * twin;  // Tetris Window
+WINDOW * iwin;  // Information Window
+WINDOW * dwin;  // Debug Window
 
+// Show message if the terminal size is too small
 void exitOnSmallTerminal(int ymax, int xmax)
 {
         // If you have a VT-80 terminal you can run this game
@@ -55,6 +66,7 @@ void exitOnSmallTerminal(int ymax, int xmax)
         exit(1);                                                        // Leave game due to insufficent space to draw game window
 }
 
+// Prints the score to IWIN
 void printScore(int xmax, int score)
 {
         string strscore = to_string(score);                             // Convert integer score to std::string
@@ -62,6 +74,7 @@ void printScore(int xmax, int score)
                 strscore.c_str());                                      // Place in middle
 }
 
+// Prints instructions for controlling the game
 void printInstructionWindow(int xmax)
 {
         // Prints the instruction window 
@@ -80,6 +93,7 @@ void printInstructionWindow(int xmax)
         wrefresh(iwin);
 }
 
+// Draw the tetris window from the board
 void drawFromGameBoard(int board[BOARD_HEIGHT][BOARD_WIDTH])
 {
         #if USE_1x2_BLOCK == 1
@@ -98,9 +112,10 @@ void drawFromGameBoard(int board[BOARD_HEIGHT][BOARD_WIDTH])
                         {
                                 if (visual[i][j])
                                 {
-                                wattron(twin, COLOR_PAIR(visual[i][j] % BLOCK_SHAPE_COUNT + 1));        // Enable printing a whole block "beautifully :) with colors"
-                                mvwprintw(twin, i + X_PADDING, j + Y_PADDING, "#");                     // Full block just for this line
-                                wattroff(twin, COLOR_PAIR(visual[i][j] % BLOCK_SHAPE_COUNT + 1));       // Turn off that beautify thing
+                                        // Painting
+                                        wattron(twin, COLOR_PAIR(visual[i][j] % BLOCK_SHAPE_COUNT + 1));        // Enable printing a whole block "beautifully :) with colors"
+                                        mvwprintw(twin, i + X_PADDING, j + Y_PADDING, "#");                     // Full block just for this line
+                                        wattroff(twin, COLOR_PAIR(visual[i][j] % BLOCK_SHAPE_COUNT + 1));       // Turn off that beautify thing
                                 }
                         }
                 }
@@ -114,7 +129,8 @@ void drawFromGameBoard(int board[BOARD_HEIGHT][BOARD_WIDTH])
                 for (int j = 0; j < BOARD_WIDTH; ++j)
                 {
                         if (board[i][j])
-                        {
+                        {       
+                                // Painting
                                 wattron(twin, COLOR_PAIR(board[i][j] % BLOCK_SHAPE_COUNT + 1));         // Enable printing a whole block "beautifully :) with colors"
                                 mvwprintw(twin, i + X_PADDING, j + Y_PADDING, "#");                     // Full block just for this line
                                 wattroff(twin, COLOR_PAIR(board[i][j] % BLOCK_SHAPE_COUNT + 1));        // Turn off that beautify thing
@@ -124,15 +140,17 @@ void drawFromGameBoard(int board[BOARD_HEIGHT][BOARD_WIDTH])
         wrefresh(twin);
 }
 
+// Set block position back to top and at middle
 void resetPosition(int &posy, int &posx, block cb, int xmax)
 {
         posy = 0;
-        if (USE_1x2_BLOCK)
-                posx = (xmax/2-cb.xsize/2)/2;
+        if (USE_1x2_BLOCK)              
+                posx = (xmax/2-cb.xsize/2)/2;           // Bring posx back to middle
         else
-                posx = (xmax-cb.xsize/2)/2;
+                posx = (xmax-cb.xsize/2)/2;             // Bring posx back to middle
 }
 
+// Update the score and print it to IWIN
 void updateScore(int linesCleared, int xmax)
 {
         mvwprintw(
@@ -142,17 +160,25 @@ void updateScore(int linesCleared, int xmax)
                                 to_string(linesCleared).c_str());
 }
 
+// Spawn a new block
 void spawnNewBlock(string &currentBlock, block &currentBlockObj, blockMatrix &bMatrix, int rotation, int blocksCount)
 {
-        currentBlock = spawnNewBlockString();                                   // Spawn new block and put in currentBlock (blockString)
+        currentBlock = spawnNewBlockString();                                           // Spawn new block and put in currentBlock (blockString)
         currentBlockObj = 
                  convertBlockStringToBlockObj(rotateBlock(rotation % 4, currentBlock)); // Update currentBlockObj
-        bMatrix = convertToBlockMatrix(currentBlockObj, blocksCount);           // Convert to blockMatrix
+        bMatrix = convertToBlockMatrix(currentBlockObj, blocksCount);                   // Convert to blockMatrix
 }
 
+// Print game over prompt
 void handleGameOver(int linesCleared, int ymax, int xmax)
 {
         // Show game over
+
+        // Choices
+        // 1. Replay
+        // 2. See high score
+        // 3. Exit
+
         werase(twin);
         werase(iwin);
         werase(dwin);
@@ -193,17 +219,20 @@ void handleGameOver(int linesCleared, int ymax, int xmax)
         exit(0);
 }
 
+// Provides game tick for syncing game events and "gravity"
 void doTick()
 {
         this_thread::sleep_for(chrono::milliseconds(TIME_PER_TICK));
 }
 
+// Clear the screen buffer in tetris screen and draw boarders in it
 void cleanTetrisScreenBuffer()
 {
-        werase(twin);                                                           // Clear TWIN window
-        box(twin, 0, 0);                                                        // Redraw the boarder
+        werase(twin);           // Clear TWIN window
+        box(twin, 0, 0);        // Redraw the boarder
 }
 
+// ViewController
 void startGame(int ymax, int xmax)
 {        
         // Spawn blocks
@@ -217,14 +246,17 @@ void startGame(int ymax, int xmax)
         block tempBlockObj;                             // Temporary block object
         blockMatrix bMatrix;                            // 2D vector for storing the matrix verison of blockShape
 
+        // VARIABLES
         int gameTicksOver       = 0             ;       // Related to gamespeed
-        int level               = INITIAL_LEVEL ;       // The higher the level, the faster the game
-        bool forceDown          = false         ;       // Whether a "gravity" pulls a block downward
-        bool spawnNew           = true          ;       // Whether a new block needs to be spawned
         int lineToClear         = -1            ;       // The line number in board to clear
         int linesCleared        = 0             ;       // Number of lines cleared (~= Score)
         int posx                = 0             ;       // X coordinate of block
         int posy                = 0             ;       // Y coordinate of block
+
+        // FLAGS
+        int level               = INITIAL_LEVEL ;       // The higher the level, the faster the game
+        bool forceDown          = false         ;       // Whether a "gravity" pulls a block downward
+        bool spawnNew           = true          ;       // Whether a new block needs to be spawned
 
         string boardStr         = ""            ;       // String representation of block
 
@@ -240,14 +272,18 @@ void startGame(int ymax, int xmax)
 
                 if (spawnNew)
                 {
-                        spawnNew = false;                                                       // Turn that flag off incase I forgot
+                        spawnNew = false;                                       // Turn that flag off incase I forgot
+
+                        level = 
+                                INITIAL_LEVEL - 
+                                linesCleared/LEVELUP_PER_CLEARLINES;            // Update Level
 
                         // Check for filled line to clear
                         lineToClear = lookForFilledLine(board);
-                        while (lineToClear != NO_LINE_TO_CLEAR)                                 // Detect all lines to clear with While Loop
+                        while (lineToClear != NO_LINE_TO_CLEAR)                 // Detect all lines to clear with While Loop
                         {
-                                clearLine(lineToClear, board);                                  // Clear that line
-                                lineToClear = lookForFilledLine(board);                         // Update new lineToClear
+                                clearLine(lineToClear, board);                  // Clear that line
+                                lineToClear = lookForFilledLine(board);         // Update new lineToClear
                                 linesCleared += 1;
                         }
 
@@ -255,8 +291,8 @@ void startGame(int ymax, int xmax)
                         updateScore(linesCleared, xmax);
 
                         // Spawn new block
-                        blocksCount += 1;                                                       // Increment blockNum to lock existing blocks
-                        spawnNewBlock
+                        blocksCount += 1;                                       // Increment blockNum to lock existing blocks
+                        spawnNewBlock                                           // Spawn a new block
                         (
                                 currentBlock, 
                                 currentBlockObj, 
@@ -269,7 +305,7 @@ void startGame(int ymax, int xmax)
                         resetPosition(posy, posx, currentBlockObj, xmax);
 
                         // Check Whether new block is spawned valid
-                        if (!requestMoveDown(
+                        if (!requestMoveDown(                                           // Validates the new moveDown request
                                 currentBlockObj, 
                                 posy, 
                                 posx, 
@@ -290,36 +326,38 @@ void startGame(int ymax, int xmax)
                 cleanTetrisScreenBuffer();                                              // Clear Tetris Screen buffer
                 clearShapeOnBoard(blocksCount, board);                                  // Clear existing blockNum pieces in gameboard array
 
-                convertBlockStringToBlockObj(rotateBlock(rotation, currentBlock));             // Convert spawnedNewBlock to block object
+                convertBlockStringToBlockObj(rotateBlock(rotation, currentBlock));      // Convert spawnedNewBlock to block object
 
+                // Controller
                 switch (x)
                 {
-                        case W_KEY:
+                        case W_KEY:     // W key is rotate
                                 tempBlockObj = convertBlockStringToBlockObj(rotateBlock((rotation + 1) % 4, currentBlock));
                                 requestRotate(tempBlockObj, rotation, posy, posx, blocksCount, board);
                                 break;
 
-                        case A_KEY:
+                        case A_KEY:     // A key is left
                                 requestMoveLeft(currentBlockObj, posy, posx, bMatrix, blocksCount, board);
                                 break;
 
-                        case S_KEY:
+                        case S_KEY:     // S key is down
                                 spawnNew = !requestMoveDown(currentBlockObj, posy, posx, bMatrix, blocksCount, board);
                                 break;
-                        case D_KEY:
+                        case D_KEY:     // D key is right
                                 requestMoveRight(currentBlockObj, posy, posx, bMatrix, blocksCount, board);
                                 break;                                                                
                 }
 
-                if (forceDown)        // Reached number of ticks
+                if (forceDown)                           // Reached number of ticks
                 {
                         gameTicksOver = 0;
                         if (!requestMoveDown(currentBlockObj, posy, posx, bMatrix, blocksCount, board))
-                                spawnNew = true;                                        // Lock in place by turning spawnNew flag
+                                spawnNew = true;        // Lock in place by turning spawnNew flag
                         else
                                 continue;
                 }
 
+                // Add the current block to TWIN window (view)
                 currentBlockObj = convertBlockStringToBlockObj(rotateBlock(rotation % 4, currentBlock));
                 bMatrix = convertToBlockMatrix(currentBlockObj, blocksCount);
                 addShapeToGameBoard(bMatrix, posy, posx, board, blocksCount);
@@ -330,12 +368,10 @@ void startGame(int ymax, int xmax)
         }
 }
 
-void game_init()
+// Initialize colors for painting
+void initializeColors()
 {
-        initscr();                                                      // Initialize screen
-        srand(time(0));                                                 // Initialize random seed
-        start_color();                                                  // Full black background
-        
+        // Color pairs for blocks
         init_pair(RED_BACKGROUND, COLOR_RED, COLOR_RED);
         init_pair(YELLOW_BACKGROUND, COLOR_YELLOW, COLOR_YELLOW);
         init_pair(GREEN_BACKGROUND, COLOR_GREEN, COLOR_GREEN);
@@ -343,10 +379,24 @@ void game_init()
         init_pair(BLUE_BACKGROUND, COLOR_BLUE, COLOR_BLUE);
         init_pair(MAGENTA_BACKGROUND, COLOR_MAGENTA, COLOR_MAGENTA);
         init_pair(WHITE_BACKGROUND, COLOR_WHITE, COLOR_WHITE);
+}
 
+// Set up Window parameters
+void setupWindow()
+{
+        start_color();                                                  // Full black background
+        initializeColors();                                             // Initialize Colors
         curs_set(0);                                                    // Hide cursor
         noecho();                                                       // No echo (@echo off)
+}
 
+// Initialize the game
+void game_init()
+{
+        initscr();                                                      // Initialize screen
+        srand(time(0));                                                 // Initialize random seed
+
+        setupWindow();
         int ymax, xmax;                                                 // Variables for screen dimension
         getmaxyx(stdscr, ymax, xmax);                                   // Get screen dimension
 
@@ -363,16 +413,15 @@ void game_init()
         
         refresh();
 
+        box(twin, 0, 0);                                                // Draw boarders for Tetris Window
+        box(iwin, 0, 0);                                                // Draw boarders for Information Window
 
-        box(twin, 0, 0);
-        box(iwin, 0, 0);
-
-        wrefresh(twin);
-        wrefresh(iwin);
+        wrefresh(twin);                                                 // Refresh
+        wrefresh(iwin);                                                 // Refresh
         
         if (DEBUG)
         {
-                dwin = newwin(DWIN_HEIGHT, DWIN_WIDTH, 0,
+                dwin = newwin(DWIN_HEIGHT, DWIN_WIDTH, 0,               // Create new debug window if DEBUG is set
                                 TWIN_WIDTH + IWIN_WIDTH);
         }
 
@@ -380,12 +429,13 @@ void game_init()
         debugWindow();
         
         getmaxyx(iwin, ymax, xmax);
-        printInstructionWindow(xmax);
-        startGame(ymax, xmax);
+        printInstructionWindow(xmax);                                   // Print instructions
+        startGame(ymax, xmax);                                          // Start game logic part
 
 }
 
+// Entry Point
 int main()
 {
-        game_init();
+        game_init();                                                    // Initialize game
 }

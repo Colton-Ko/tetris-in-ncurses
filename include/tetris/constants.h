@@ -35,6 +35,8 @@
 #define BLOCK_WIDTH             4
 #define BLOCK_WIDTH_SQR         16
 
+#define LEVELUP_PER_CLEARLINES  3
+
 #define SHAPE_0                 "..#...#...#...#."
 #define SHAPE_1                 ".##..#...#......"
 #define SHAPE_2                 ".#...#...##....."
@@ -78,6 +80,7 @@
 #define YOUR_SCORE              "Your score is "
 #define LEN_YOUR_SCORE          14
 
+// Block colors
 #define RED_BACKGROUND          2
 #define YELLOW_BACKGROUND       3
 #define GREEN_BACKGROUND        4

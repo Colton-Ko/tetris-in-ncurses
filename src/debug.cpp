@@ -7,7 +7,7 @@
         CHOW NAM FUNG           (3035712767)
 
         DATE
-        2020-05-07
+        2020-05-08
 
         FILENAME
         debug.cpp
@@ -15,6 +15,12 @@
         VIEW
                 Tabsize:        8
                 Indentation:    Space
+
+        PURPOSE
+
+                This file is responsible for handling the presentation of debugging-
+                information.
+
 */
 
 #include "tetris/blocks.h"
@@ -32,8 +38,8 @@
 
 using namespace std;
 
-const string DEBUGWINDOW = "DEBUG WINDOW";
 
+// Draws required content in Debug Window if called. Does nothing if DEBUG is set as 0 in options.h
 void debugWindow()
 {
         if (!DEBUG)
@@ -41,6 +47,7 @@ void debugWindow()
                 return;
         }
 
+        string DEBUGWINDOW = "DEBUG WINDOW";
         int ymax, xmax;
         getmaxyx(dwin, ymax, xmax);
 
@@ -59,6 +66,7 @@ void debugWindow()
 
 }
 
+// Updates the text componenets in Debug Window
 void updateDebug(int board[BOARD_HEIGHT][BOARD_WIDTH])
 {
         if (!DEBUG)
@@ -67,7 +75,9 @@ void updateDebug(int board[BOARD_HEIGHT][BOARD_WIDTH])
         }
         int xmax;
         xmax = getmaxx(dwin);
+        
         string boardStr = gameboardToString(board, xmax);
+        string DEBUGWINDOW = "DEBUG WINDOW";
 
         mvwprintw(dwin, 1, 0, boardStr.c_str());
 
