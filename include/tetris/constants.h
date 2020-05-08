@@ -70,7 +70,7 @@
 #define Y_LOWER_BOUNDARY        0
 
 #define RUN_LARGE_TERM          "Please this program in a larger terminal!"
-#define MIN_SIZE_PRMPT          "Minimum size is 44x22"
+#define MIN_SIZE_PRMPT          "Minimum size is 50x24"
 #define EXIT_ANY_KEY            "Press any key to exit"
 
 #define EXIT_ENTER_KEY          "Press Spacebar to exit"

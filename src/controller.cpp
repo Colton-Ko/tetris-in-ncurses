@@ -66,10 +66,14 @@ void exitOnSmallTerminal(int ymax, int xmax)
         exit(1);                                                        // Leave game due to insufficent space to draw game window
 }
 
+int calculateScore(int score)
+{
+        return score*BOARD_WIDTH;
+}
 // Prints the score to IWIN
 void printScore(int xmax, int score)
 {
-        string strscore = to_string(score);                             // Convert integer score to std::string
+        string strscore = to_string(calculateScore(score));             // Convert integer score to std::string
         mvwprintw(iwin,11, (xmax-strscore.size())/2,
                 strscore.c_str());                                      // Place in middle
 }
@@ -153,6 +157,7 @@ void resetPosition(int &posy, int &posx, block cb, int xmax)
 // Update the score and print it to IWIN
 void updateScore(int linesCleared, int xmax)
 {
+        linesCleared = calculateScore(linesCleared);
         mvwprintw(
                                 iwin, 
                                 11, 
@@ -190,7 +195,7 @@ void handleGameOver(int linesCleared, int ymax, int xmax)
         getmaxyx(stdscr, ymax, xmax);
 
         string score (YOUR_SCORE);
-        score += to_string(linesCleared);
+        score += to_string(calculateScore(linesCleared));
 
         string exitEnter (EXIT_ENTER_KEY);
 
@@ -230,6 +235,14 @@ void cleanTetrisScreenBuffer()
 {
         werase(twin);           // Clear TWIN window
         box(twin, 0, 0);        // Redraw the boarder
+}
+
+void printLevel(int linesCleared, int xmax)
+{
+        string levelPrompt = "LEVEL";
+        string level = to_string(linesCleared/LEVELUP_PER_CLEARLINES + 1);
+        mvwprintw(iwin, 12, 2, levelPrompt.c_str());
+        mvwprintw(iwin, 13, (xmax- level.length())/2, level.c_str());
 }
 
 // ViewController
@@ -274,10 +287,6 @@ void startGame(int ymax, int xmax)
                 {
                         spawnNew = false;                                       // Turn that flag off incase I forgot
 
-                        level = 
-                                INITIAL_LEVEL - 
-                                linesCleared/LEVELUP_PER_CLEARLINES;            // Update Level
-
                         // Check for filled line to clear
                         lineToClear = lookForFilledLine(board);
                         while (lineToClear != NO_LINE_TO_CLEAR)                 // Detect all lines to clear with While Loop
@@ -285,7 +294,12 @@ void startGame(int ymax, int xmax)
                                 clearLine(lineToClear, board);                  // Clear that line
                                 lineToClear = lookForFilledLine(board);         // Update new lineToClear
                                 linesCleared += 1;
+                                level =                                         // Update Level
+                                        INITIAL_LEVEL - 
+                                        (linesCleared/LEVELUP_PER_CLEARLINES);
                         }
+
+                        printLevel(linesCleared, xmax);                         // Print current Level
 
                         // Update score
                         updateScore(linesCleared, xmax);
