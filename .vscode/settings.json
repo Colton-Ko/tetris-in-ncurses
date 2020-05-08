@@ -18,7 +18,9 @@
                 "list": "cpp",
                 "unordered_map": "cpp",
                 "thread": "cpp",
-                "chrono": "cpp"
+                "chrono": "cpp",
+                "fstream": "cpp",
+                "ostream": "cpp"
         },
         "C_Cpp.default.includePath": ["/Volumes/Tank/prog/include"]
 }

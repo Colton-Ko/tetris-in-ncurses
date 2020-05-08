@@ -4,6 +4,10 @@
 #include "tetris/options.h"
 
 #define GAMEINFO                "GAME RULES"
+#define GAME_TITLE              "TETRIS GAME"
+#define LEN_GAME_TITLE          11
+
+
 #define TWIN_HEIGHT             24
 #define TWIN_WIDTH              23
 
@@ -88,5 +92,9 @@
 #define BLUE_BACKGROUND         6
 #define MAGENTA_BACKGROUND      7
 #define WHITE_BACKGROUND        1
+
+#define HISTORY_FILENAME        "tetris_high_scores.txt"
+#define SEPARATION_CHAR         ','
+#define OPERATION_FAILED        -1
 
 #endif

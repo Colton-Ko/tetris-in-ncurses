@@ -1,4 +1,4 @@
-#	 HKU ENGG 1340 Programming and technologies
+#	HKU ENGG 1340 Programming and technologies
 # 	Group 140 (2019-2020 2nd Semester)
 
 # 	AUTHOR
@@ -12,17 +12,17 @@
 # 	options.h
 
 # 	VIEW
-#         Tabsize:        4
-#         Indentation:    TAB
+#	Tabsize:        8
+#	Indentation:    TAB
 
 # Predefined variables
 CXXFLAGS=-I local/include/ncursestw -I local/include -I include -L local/lib -lncursestw -ldl -pthread -pedantic-errors -std=c++11 -Ofast
 LDFLAGS=-I local/include/ncursestw -I local/include -I include -L local/lib -pedantic-errors -std=c++11 -lncursestw -ldl -pthread
-OBJECTS=obj/blocks.o obj/debug.o obj/game.o obj/controller.o
+OBJECTS=obj/blocks.o obj/debug.o obj/game.o obj/controller.o obj/gamerecord.o 
 HEADERS=include/tetris/blocks.h include/tetris/game.h include/tetris/constants.h include/tetris/types.h include/tetris/controller.h include/tetris/debug.h include/tetris/options.h
 
 # Build targets
-all: ncurses obj/blocks.o obj/debug.o obj/game.o obj/controller.o $(HEADERS)
+all: ncurses $(OBJECTS) $(HEADERS)
 	g++ $(OBJECTS) -o bin/tetris $(LDFLAGS)
 	@echo "Compiled! Check it out in bin/tetris!"
 
@@ -38,6 +38,9 @@ obj/blocks.o: src/blocks.cpp $(HEADERS)
 obj/debug.o: src/debug.cpp $(HEADERS)
 	g++ $(CXXFLAGS) $< -c -o $@ 
 
+obj/gamerecord.o: src/gamerecord.cpp $(HEADERS)
+	g++ $(CXXFLAGS) $< -c -o $@ 
+
 # Clean the binaries
 clean:
 	rm -rfv bin/*
@@ -50,6 +53,9 @@ clean_all:
 	rm -rfv bin/*
 	rm -rfv obj/*
 	
+test: test/unit-fileIO.cpp $(HEADERS)
+	g++ $(CXXFLAGS) test/unit-fileIO.cpp -o test.o && ./test.o
+
 # Compile ncurses
 ncurses:
 	chmod +x buildncurses.sh

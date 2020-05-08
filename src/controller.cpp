@@ -29,6 +29,14 @@
                 3.      Provision of User interface
                 4.      Hosting the main gameloop
                 5.      Provision of Entry point
+
+        CHECKLIST
+
+                - [X]   Fix File header
+                - [X]   Add comment on every function in header
+                - [X]   Add comment on every function in implementation file
+                - [X]   Check header file name (Is it for another file?)
+                - [X]   Check indentation consistency
 */
 
 #include "tetris/blocks.h"
@@ -38,6 +46,7 @@
 #include "tetris/options.h"
 #include "tetris/constants.h"
 #include "tetris/types.h"
+#include "tetris/gamerecord.h"
 
 #include <ncurses.h>
 #include <cstring>
@@ -66,11 +75,13 @@ void exitOnSmallTerminal(int ymax, int xmax)
         exit(1);                                                        // Leave game due to insufficent space to draw game window
 }
 
+// Returns the score based on number of lines cleared
 int calculateScore(int score)
 {
         return score*BOARD_WIDTH;
 }
-// Prints the score to IWIN
+
+
 void printScore(int xmax, int score)
 {
         string strscore = to_string(calculateScore(score));             // Convert integer score to std::string
@@ -82,7 +93,7 @@ void printScore(int xmax, int score)
 void printInstructionWindow(int xmax)
 {
         // Prints the instruction window 
-        mvwprintw(iwin, 1, (xmax-12)/2 ,"TETRIS GAME");                 // 1st line: Game Title
+        mvwprintw(iwin, 1, (xmax-LEN_GAME_TITLE)/2 ,GAME_TITLE);        // 1st line: Game Title
         mvwprintw(iwin, 3, 2,"KEYS");                                   // 2nd: Walkthrough on keys
                                                                         // Keys are same as in Minecraft my fav. game
         mvwprintw(iwin, 5, (xmax-10)/2, "W : Rotate");                  // W -> Rotate
@@ -166,7 +177,7 @@ void updateScore(int linesCleared, int xmax)
 }
 
 // Spawn a new block
-void spawnNewBlock(string &currentBlock, block &currentBlockObj, blockMatrix &bMatrix, int rotation, int blocksCount)
+void spawnNewBlock(blockString &currentBlock, block &currentBlockObj, blockMatrix &bMatrix, int rotation, int blocksCount)
 {
         currentBlock = spawnNewBlockString();                                           // Spawn new block and put in currentBlock (blockString)
         currentBlockObj = 
@@ -237,6 +248,7 @@ void cleanTetrisScreenBuffer()
         box(twin, 0, 0);        // Redraw the boarder
 }
 
+// Print the current level of the game to IWIN
 void printLevel(int linesCleared, int xmax)
 {
         string levelPrompt = "LEVEL";
@@ -245,12 +257,12 @@ void printLevel(int linesCleared, int xmax)
         mvwprintw(iwin, 13, (xmax- level.length())/2, level.c_str());
 }
 
-// ViewController
+// ViewController of the game
 void startGame(int ymax, int xmax)
 {        
         // Spawn blocks
-        string blocks[BLOCK_SHAPE_COUNT];
-        string currentBlock = spawnNewBlockString();
+        blockString blocks[BLOCK_SHAPE_COUNT];
+        blockString currentBlock = spawnNewBlockString();
 
         // Declare variables
         int rotation    = 0;                            // Stores Rotation angle, where angle = 90*rotation
@@ -285,7 +297,7 @@ void startGame(int ymax, int xmax)
 
                 if (spawnNew)
                 {
-                        spawnNew = false;                                       // Turn that flag off incase I forgot
+                        spawnNew = false;                                       // Turn that flag off in case I forgot
 
                         // Check for filled line to clear
                         lineToClear = lookForFilledLine(board);
