@@ -18,8 +18,8 @@
 # Predefined variables
 CXXFLAGS=-I local/include/ncursestw -I local/include -I include -pthread -std=c++11 -pedantic-errors -Ofast
 LDFLAGS=-L local/lib -std=c++11 -pedantic-errors -lncursestw -ldl -pthread
-OBJECTS=obj/blocks.o obj/debug.o obj/game.o obj/controller.o obj/gamerecord.o obj/window.o 
-HEADERS=include/tetris/blocks.h include/tetris/game.h include/tetris/constants.h include/tetris/types.h include/tetris/controller.h include/tetris/debug.h include/tetris/options.h include/tetris/gamerecord.h include/tetris/window.h
+OBJECTS=obj/blocks.o obj/debug.o obj/game.o obj/controller.o obj/bookkeeper.o obj/window.o 
+HEADERS=include/tetris/blocks.h include/tetris/game.h include/tetris/constants.h include/tetris/types.h include/tetris/controller.h include/tetris/debug.h include/tetris/options.h include/tetris/bookkeeper.h include/tetris/window.h
 
 # Build targets
 all: ncurses $(OBJECTS) $(HEADERS)
@@ -38,7 +38,7 @@ obj/blocks.o: src/blocks.cpp $(HEADERS)
 obj/debug.o: src/debug.cpp $(HEADERS)
 	g++ $(CXXFLAGS) $< -c -o $@ 
 
-obj/gamerecord.o: src/gamerecord.cpp $(HEADERS)
+obj/bookkeeper.o: src/bookkeeper.cpp $(HEADERS)
 	g++ $(CXXFLAGS) $< -c -o $@ 
 
 obj/window.o : src/window.cpp $(HEADERS)

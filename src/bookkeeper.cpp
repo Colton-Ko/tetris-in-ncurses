@@ -11,7 +11,7 @@
 
         FILENAME
         
-                gamerecord.cpp
+                bookkeeper.cpp
 
         REFERENCES
 
@@ -34,7 +34,7 @@
 #include "tetris/options.h"
 #include "tetris/constants.h"
 #include "tetris/types.h"
-#include "tetris/gamerecord.h"
+#include "tetris/bookkeeper.h"
 
 #include <sstream>
 #include <iomanip>

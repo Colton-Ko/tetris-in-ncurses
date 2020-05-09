@@ -10,15 +10,15 @@
         2020-05-08
 
         FILENAME
-        gamerecord.h
+        bookleeper.h
 
         VIEW
                 Tabsize	:	8
                 Indentation:	Space
 */
 
-#ifndef GAMERECORD_H
-#define GAMERECORD_H 
+#ifndef BOOKKEEPER_H
+#define BOOKKEEPER_H 
 
 #include "tetris/constants.h"
 #include "tetris/types.h"
