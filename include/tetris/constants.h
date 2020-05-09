@@ -97,4 +97,23 @@
 #define SEPARATION_CHAR         ','
 #define OPERATION_FAILED        -1
 
+#define CHOICE_PLAY_AGAIN       0
+#define CHOICE_SEE_HIGH         1
+#define CHOICE_LEAVE_GAME       2
+
+#define PLAY_AGAIN              (string) " Play again " 
+#define SEE_SCORES              (string) " See high scores "
+#define LEAVE_GAME              (string) " Leave game "
+#define END_GAME_CHOICES        3
+
+#define Y_MENUSIZE_PADDING      2
+#define X_MENUSIZE_PADDING      2
+
+#define KEY_SPACE               ' '
+
+#define END_GAME_MENU_CHOICES   3
+#define PLAY_AGAIN_CHOICE       0
+#define SEE_SCORES_CHOICE       1
+#define END_GAME_CHOICE         2
+
 #endif

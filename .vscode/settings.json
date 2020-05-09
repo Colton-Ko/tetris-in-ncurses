@@ -20,7 +20,10 @@
                 "thread": "cpp",
                 "chrono": "cpp",
                 "fstream": "cpp",
-                "ostream": "cpp"
+                "ostream": "cpp",
+                "*.tcc": "cpp",
+                "hash_map": "cpp",
+                "valarray": "cpp"
         },
         "C_Cpp.default.includePath": ["/Volumes/Tank/prog/include"]
 }

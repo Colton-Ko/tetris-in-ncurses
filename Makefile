@@ -16,10 +16,10 @@
 #	Indentation:    TAB
 
 # Predefined variables
-CXXFLAGS=-I local/include/ncursestw -I local/include -I include -L local/lib -lncursestw -ldl -pthread -pedantic-errors -std=c++11 -Ofast
-LDFLAGS=-I local/include/ncursestw -I local/include -I include -L local/lib -pedantic-errors -std=c++11 -lncursestw -ldl -pthread
-OBJECTS=obj/blocks.o obj/debug.o obj/game.o obj/controller.o obj/gamerecord.o 
-HEADERS=include/tetris/blocks.h include/tetris/game.h include/tetris/constants.h include/tetris/types.h include/tetris/controller.h include/tetris/debug.h include/tetris/options.h
+CXXFLAGS=-I local/include/ncursestw -I local/include -I include -pthread -std=c++11 -pedantic-errors -Ofast
+LDFLAGS=-L local/lib -std=c++11 -pedantic-errors -lncursestw -ldl -pthread
+OBJECTS=obj/blocks.o obj/debug.o obj/game.o obj/controller.o obj/gamerecord.o obj/window.o 
+HEADERS=include/tetris/blocks.h include/tetris/game.h include/tetris/constants.h include/tetris/types.h include/tetris/controller.h include/tetris/debug.h include/tetris/options.h include/tetris/gamerecord.h include/tetris/window.h
 
 # Build targets
 all: ncurses $(OBJECTS) $(HEADERS)
@@ -41,6 +41,9 @@ obj/debug.o: src/debug.cpp $(HEADERS)
 obj/gamerecord.o: src/gamerecord.cpp $(HEADERS)
 	g++ $(CXXFLAGS) $< -c -o $@ 
 
+obj/window.o : src/window.cpp $(HEADERS)
+	g++ $(CXXFLAGS) $< -c -o $@ 
+
 # Clean the binaries
 clean:
 	rm -rfv bin/*
@@ -53,8 +56,8 @@ clean_all:
 	rm -rfv bin/*
 	rm -rfv obj/*
 	
-test: test/unit-fileIO.cpp $(HEADERS)
-	g++ $(CXXFLAGS) test/unit-fileIO.cpp -o test.o && ./test.o
+test: test/file-unitWindow.cpp $(HEADERS)
+	g++ $(CXXFLAGS) test/file-unitWindow.cpp -o test.o $(LDFLAGS) && ./test.o
 
 # Compile ncurses
 ncurses:

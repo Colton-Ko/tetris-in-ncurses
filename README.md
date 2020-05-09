@@ -28,10 +28,67 @@ Tetris is a traditional and common game, where blocks in different shapes drop f
 1. Random Events
 	- The falling blocks are randomly determined.
 2. Arrays
-	-  The shape of the blocks are stored and manipulated in arrays.
+	-  The shape of the blocks and game board are stored and manipulated in arrays.
 3. Dynamic Memory management
-	- The gameboard is implemenented using dynamic memory.
+	- The file loading and saving feature is implemented using dynamic memory.
 4. File Management
-	- File management will be implemented to storing the game records (such as the scores).
+	- Loading and saving score history involves file management.
 5. Modularity
 	- The code will be split into multiple files for better modularity and manageability.
+
+## Running the code
+
+### Requirements
+
+1. Active internet connection (during compiling)
+2. Terminal size larger than dimension of 50x24
+
+### Compilation from source
+
+To compile the code, simply run the following in your shell (Terminal emulator)
+
+```sh
+make
+```
+
+After compiling the sources, the executable is in `bin` folder. To run the game, type
+
+```sh
+./bin/tetris
+```
+
+### Compiling options
+
+- **Clean** existing binaries (Except `ncurses`)
+
+  ```sh
+  make clean
+  ```
+
+- **Clean all** existing binaries (Including `ncurses`)
+
+  ```sh
+  make clean_all
+  ```
+  
+- Compile only `ncurses`
+
+  ```sh
+  make ncurses
+  ```
+
+> **Tip**
+>
+> If you run into a compilation problem. Always run `make clean` and try recompiling to see if it helps.
+
+### Folder structure
+
+| Folder           | Content                                                      |
+| ---------------- | ------------------------------------------------------------ |
+| `bin`            | The actual compiled executable file for tetris game. (`tetris`) |
+| `obj`            | Object files emitted by compiler                             |
+| `src`            | C++ source code for this project                             |
+| `include/tetris` | Header files for this project                                |
+| `local`          | Compiled `ncurses` library                                   |
+| `ncurses`        | `ncurses` sources fetched on github                          |
+

@@ -47,6 +47,7 @@
 #include "tetris/constants.h"
 #include "tetris/types.h"
 #include "tetris/gamerecord.h"
+#include "tetris/window.h"
 
 #include <ncurses.h>
 #include <cstring>
@@ -188,51 +189,8 @@ void spawnNewBlock(blockString &currentBlock, block &currentBlockObj, blockMatri
 // Print game over prompt
 void handleGameOver(int linesCleared, int ymax, int xmax)
 {
-        // Show game over
-
-        // Choices
-        // 1. Replay
-        // 2. See high score
-        // 3. Exit
-
-        werase(twin);
-        werase(iwin);
-        werase(dwin);
-
-        wrefresh(twin);
-        wrefresh(iwin);
-        wrefresh(dwin);
-
-        getmaxyx(stdscr, ymax, xmax);
-
-        string score (YOUR_SCORE);
-        score += to_string(calculateScore(linesCleared));
-
-        string exitEnter (EXIT_ENTER_KEY);
-
-        clear();
-
-        mvprintw(ymax/2-1, (xmax-LEN_END_GAME)/2 , END_GAME);
-        mvprintw(ymax/2, (xmax-score.length())/2 , score.c_str());
-        mvprintw(ymax/2+1, (xmax-exitEnter.length())/2 , exitEnter.c_str());
-
-        nodelay(stdscr, false);
-        refresh();
-
-        while(getch() != ' ')
-        {
-                clear();
-
-                mvprintw(ymax/2-1, (xmax-LEN_END_GAME)/2 , END_GAME);
-                mvprintw(ymax/2, (xmax-score.length())/2 , score.c_str());
-                mvprintw(ymax/2+1, (xmax-exitEnter.length())/2 , exitEnter.c_str());
-
-                nodelay(stdscr, false);
-                refresh();
-        }
-
-        endwin();
-        exit(0);
+        int score = calculateScore(linesCleared);
+        gameOverMenu(score);
 }
 
 // Provides game tick for syncing game events and "gravity"
@@ -417,7 +375,7 @@ void setupWindow()
 }
 
 // Initialize the game
-void game_init()
+void gameInit()
 {
         initscr();                                                      // Initialize screen
         srand(time(0));                                                 // Initialize random seed
@@ -463,5 +421,5 @@ void game_init()
 // Entry Point
 int main()
 {
-        game_init();                                                    // Initialize game
+        gameInit();                                                    // Initialize game
 }

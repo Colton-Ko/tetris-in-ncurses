@@ -40,4 +40,7 @@ void printScore(int xmax, int score);
 // Prints instructions for controlling the game
 void printInstructionWindow(int xmax);
 
+// Initialize the game
+void gameInit();
+
 #endif
