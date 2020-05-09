@@ -56,9 +56,6 @@ clean_all:
 	rm -rfv bin/*
 	rm -rfv obj/*
 	
-test: test/file-unitWindow.cpp $(HEADERS)
-	g++ $(CXXFLAGS) test/file-unitWindow.cpp -o test.o $(LDFLAGS) && ./test.o
-
 # Compile ncurses
 ncurses:
 	chmod +x buildncurses.sh
