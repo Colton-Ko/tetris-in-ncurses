@@ -34,6 +34,7 @@
 #include "tetris/options.h"
 #include "tetris/constants.h"
 #include "tetris/types.h"
+#include "tetris/gamerecord.h"
 
 #include <sstream>
 #include <iomanip>
@@ -42,6 +43,9 @@
 #include <memory>
 #include <stdexcept>
 #include <fstream>
+
+scoreEntry * head;
+scoreEntry * tail;
 
 using namespace std;
 
@@ -81,7 +85,7 @@ string getCurrentDateTime()
 
 // Appends a scoreEntry record link list. Receieves a scoreEntry pointer name head and tail
 // and the integer of the score
-void appendRecordToTable(scoreEntry * & head, scoreEntry * & tail, string currentLocalTimeString, int score)
+void appendRecordToTable(string currentLocalTimeString, int score)
 {
         // Steps to add a new record to tableOfScores
         // 1. Create new scoreEntry pointer
@@ -132,7 +136,7 @@ void showHistory(scoreEntry * head)
 // tail as the last item in record link list
 // Returns the highest score found in the file if read successfully
 // Returns -1 if unable to read the file
-int readHistoryFile(scoreEntry * & head, scoreEntry * & tail)
+int readHistoryFile()
 {
         ifstream fin;
         fin.open(HISTORY_FILENAME);
@@ -180,7 +184,7 @@ int readHistoryFile(scoreEntry * & head, scoreEntry * & tail)
                         }
 
                         // Finished parsing CSV, append it to record link list
-                        appendRecordToTable(head, tail, dateTime, playerScore);
+                        appendRecordToTable(dateTime, playerScore);
                         
                         // Meanwhile also find highScore
                         if (playerScore > highScore)    // If score of current record Player

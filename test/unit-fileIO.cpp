@@ -202,6 +202,7 @@ bool writeToHistoryTextFile(string dateTimeString, int playerScore)
                 return false;                   // Return false for error handling
         }
         fout << dateTimeString + "," + to_string(playerScore) << endl;
+        fout.close();
         return true;
 }
 

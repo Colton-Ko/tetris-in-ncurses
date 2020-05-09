@@ -1,3 +1,38 @@
+/*
+        HKU ENGG 1340 Programming and technologies
+        Group 140 (2019-2020 2nd Semester)
+
+        AUTHOR
+        TAM CHUN KIT            (3035686554)
+        CHOW NAM FUNG           (3035712767)
+
+        DATE
+        2020-05-09
+
+        FILENAME
+        window.cpp          [MAIN FUNCTION IS DEFINED IN THIS FILE]
+
+        VIEW
+                Tabsize:        8
+                Indentation:    Space
+
+        PURPOSES
+
+                This file handles specialized window operations involving ncurses throughout the game
+                1.      Displaying menus
+                2.      Handling menu operations for different game events
+                        2.1     End Game
+                        2.2     Show score history
+
+        CHECKLIST
+
+                - [X]   Fix File header
+                - [X]   Add comment on every function in header
+                - [X]   Add comment on every function in implementation file
+                - [X]   Check header file name (Is it for another file?)
+                - [X]   Check indentation consistency
+*/
+
 #include "tetris/blocks.h"
 #include "tetris/controller.h"
 #include "tetris/game.h"
@@ -5,6 +40,7 @@
 #include "tetris/options.h"
 #include "tetris/constants.h"
 #include "tetris/types.h"
+#include "tetris/gamerecord.h"
 
 #include <ncurses.h>
 #include <string>
@@ -124,48 +160,60 @@ void gameOverMenu(int score)
         int ymax, xmax;                         // Stores the screen dimension info
         getmaxyx(stdscr, ymax, xmax);           // ymax = height, xmax = width
         
-        // Check high score
-
-        string gameOverLabel = 
+        string gameOverLabel =              
                 " Game over ";
 
         string yourScoreLabel =
                 "Your score is " + 
-                to_string(score) + 
-                ".";
+                to_string(score);
 
-        string submitHint =                     // Prints a hint for user
-                "Press Spacebar to select your choice.";
+        string submitHint = 
+                "Press Spacebar to select your choice";
         
         string controlKeysHint =
-                "Press W to move up. S to move down.";
+                "Press W to move up, Press S to move down";
 
 
         const int MENU_YSIZE = END_GAME_CHOICES;// Specify the height of endGameMenu to be number of choices
 
         attron(A_REVERSE);
-        mvwprintw                               // Prints a hint for keys to select choices
+        mvwprintw                               // Prints a Title (Game over)
         (
                 stdscr, 
-                (ymax-MENU_YSIZE)/2-7 , 
+                (ymax-MENU_YSIZE)/2-5 , 
                 (xmax-gameOverLabel.length())/2, 
                 gameOverLabel.c_str()
         );
         attroff(A_REVERSE);
 
-        mvwprintw                               // Prints a hint for keys to select choices
+        mvwprintw                               // Prints a hint for play scores
         (
                 stdscr, 
-                (ymax-MENU_YSIZE)/2-5 , 
+                (ymax-MENU_YSIZE)/2-2, 
                 (xmax-yourScoreLabel.length())/2, 
                 yourScoreLabel.c_str()
         );
 
+        // Check high score
+        int highScore = readHistoryFile();
+        if (highScore < score)
+        {
+                string newHighScore = "0w0 NEW HIGH SCORE!";
+                attron(A_BLINK);
+                mvwprintw                               // Print new high score hint
+                (
+                        stdscr, 
+                        (ymax-MENU_YSIZE)/2-3 , 
+                        (xmax-newHighScore.length())/2, 
+                        newHighScore.c_str()
+                );
+                attroff(A_BLINK);
+        }
 
-        mvwprintw                               // Prints a hint for keys to select choices
+        mvwprintw                               // Prints a hint for keys to submit choices
         (
                 stdscr, 
-                (ymax-MENU_YSIZE)/2-3 , 
+                (ymax-MENU_YSIZE)/2+MENU_YSIZE+4, 
                 (xmax-submitHint.length())/2, 
                 submitHint.c_str()
         );
@@ -173,7 +221,7 @@ void gameOverMenu(int score)
         mvwprintw                               // Prints a hint for keys to select choices
         (
                 stdscr, 
-                (ymax-MENU_YSIZE)/2-2 , 
+                (ymax-MENU_YSIZE)/2+MENU_YSIZE+5 , 
                 (xmax-controlKeysHint.length())/2, 
                 controlKeysHint.c_str()
         );
@@ -183,7 +231,6 @@ void gameOverMenu(int score)
         string  endGameMenu[] =                 // Create end game menu
                 {
                         PLAY_AGAIN, 
-                        SEE_SCORES,
                         LEAVE_GAME
                 };
 
@@ -194,7 +241,9 @@ void gameOverMenu(int score)
                         END_GAME_MENU_CHOICES,  // The number of choices available
                         ymax,                   // Height of stdscr
                         xmax                    // Width of stdscr
-                );     
+                );
+
+        bool notifyWriteFailed = !writeToHistoryTextFile(getCurrentDateTime(), score);
 
         switch(choice)
         {
@@ -203,15 +252,13 @@ void gameOverMenu(int score)
                         gameInit();
                         break;
 
-                case (SEE_SCORES_CHOICE):
-                        endwin();
-                        cout << "NOT DONE!" << endl;
-                        exit(0);
-                        break;
-
                 case (END_GAME_CHOICE):
                         endwin();
-                        cout << "Had a great time with you. See you ! :)" << endl;
+                        cout << "Had a great time with you. See you ! =w=" << endl;
+                        if (notifyWriteFailed)
+                        {
+                                cout << "We could not write the score history file." << endl;
+                        }
                         exit(0);
                         break;
         }

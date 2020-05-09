@@ -23,6 +23,9 @@
 #include "tetris/constants.h"
 #include "tetris/types.h"
 
+extern scoreEntry * head;
+extern scoreEntry * tail;
+
 #include <string>
 
 using namespace std;
@@ -38,10 +41,10 @@ string getCurrentDateTime();
 
 // Appends a scoreEntry record link list. Receieves a scoreEntry pointer name head and tail
 // and the integer of the score
-void appendRecordToTable(scoreEntry * & head, scoreEntry * & tail, string currentLocalTimeString, int score);
+void appendRecordToTable(string currentLocalTimeString, int score);
 
 // Prints the player history, given a scoreEntry pointer head.
-void showHistory(scoreEntry * head);
+void showHistory();
 
 // Referred from
 // https://www.geeksforgeeks.org/csv-file-management-using-c/
@@ -51,6 +54,10 @@ void showHistory(scoreEntry * head);
 // tail as the last item in record link list
 // Returns the highest score found in the file if read successfully
 // Returns -1 if unable to read the file
-int readHistoryFile(scoreEntry * & head, scoreEntry * & tail);
+int readHistoryFile();
+
+// Writes a text file named HISTORY_FILENAME. Returns true if successful. 
+// false if writing is not successful.
+bool writeToHistoryTextFile(string dateTimeString, int playerScore);
 
 #endif
