@@ -105,15 +105,15 @@ void appendRecordToTable(string currentLocalTimeString, int score)
         // Check whether HEAD is NULL. If it is then append that add that to HEAD.
         // Also the tail is the same entry
 
-        if (head == NULL)
+        if (head == NULL)               // If the head does not even exist
         {
-                head = currentEntry;
+                head = currentEntry;    // Set the head and tail to be the currenEntry
                 tail = currentEntry;
         }
-        else
+        else                            // If head exists
         {
-                tail->next = currentEntry;
-                tail = currentEntry;
+                tail->next = currentEntry;      // Set the next item in the existing tail to currentEntry
+                tail = currentEntry;            // Update the tail entry to be the current
         }
 }
 

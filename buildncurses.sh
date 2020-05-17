@@ -5,6 +5,15 @@ if ! test -d ncurses; then
         git clone https://github.com/mirror/ncurses.git
 fi
 
+if ! test -d obj; then
+        mkdir obj
+fi
+
+if ! test -d bin; then
+        mkdir bin
+fi
+
+
 # Check for compiled ncurses
 if test -f "ncurses/.ncurses_ready"; then
 
