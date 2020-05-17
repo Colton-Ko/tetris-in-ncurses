@@ -37,5 +37,8 @@ fi
 
 cp -rv $NCURSES_DIR .
 
-mv Makefile Makefile.other
-mv Makefile.ios Makefile
+cp Makefile Makefile.other
+cp Makefile.ios Makefile
+
+mkdir bin
+mkdir obj

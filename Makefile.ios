@@ -16,7 +16,7 @@
 #	Indentation:    TAB
 
 # Predefined variables
-CC=clang
+CC=clang++
 CXXFLAGS=-isysroot ../sdks-master/iPhoneOS11.2.sdk -stdlib=libc++ -I /usr/include -I local/include/ncursestw -I local/include -I include -pthread -std=c++11 -pedantic-errors -Ofast
 LDFLAGS=-L ../sdks-master/iPhoneOS11.2.sdk/usr/lib -lSystem -L . -lncursesw
 CCFLAGS=-I /usr/include/c++/v1 -isysroot ../sdks-master/iPhone11.2.sdk -stdlib=libc++ -I local/include/ncursestw -I /usr/include -I /user/include/c++/v1 -I local/include -I include -pthread -std=c++11 -pedantic-errors -Ofast
@@ -25,7 +25,7 @@ HEADERS=include/tetris/blocks.h include/tetris/game.h include/tetris/constants.h
 
 # Build targets
 all: $(OBJECTS) $(HEADERS)
-	$(CC) $(OBJECTS) $(LDFLAGS) -o tetris
+	$(CC) $(OBJECTS) $(LDFLAGS) -o bin/tetris
 	@echo "Compiled! Check it out in bin/tetris!"
 
 obj/game.o: src/game.cpp $(HEADERS)
