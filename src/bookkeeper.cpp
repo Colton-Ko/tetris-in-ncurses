@@ -1,8 +1,7 @@
 /*
 
         AUTHOR
-        TAM CHUN KIT	(3035686554)
-        CHOW NAM FUNG	(3035712767)
+        Kolton
 
         DATE
         2020-05-08
