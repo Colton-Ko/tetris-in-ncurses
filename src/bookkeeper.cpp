@@ -4,8 +4,7 @@
         2020-05-08
 
         FILENAME
-        
-                bookkeeper.cpp
+        bookkeeper.cpp
 
         REFERENCES
 
@@ -13,8 +12,6 @@
                 - https://www.tutorialspoint.com/cplusplus/cpp_date_time.htm
                 - https://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf
                 - https://www.geeksforgeeks.org/csv-file-management-using-c/
-
-
 
         VIEW
                 Tabsize	:	8

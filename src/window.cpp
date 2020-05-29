@@ -18,13 +18,6 @@
                         2.1     End Game
                         2.2     Show score history
 
-        CHECKLIST
-
-                - [X]   Fix File header
-                - [X]   Add comment on every function in header
-                - [X]   Add comment on every function in implementation file
-                - [X]   Check header file name (Is it for another file?)
-                - [X]   Check indentation consistency
 */
 
 #include "tetris/blocks.h"

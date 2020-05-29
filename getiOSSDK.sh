@@ -14,7 +14,8 @@ fi
 
 # Install packages
 # apt update
-apt install $PACKAGES
+echo "Installing necessary packages..."
+apt install $PACKAGES 1>/dev/null
 
 # Install finished
 # Now download sdk
@@ -23,7 +24,8 @@ if ! [ -d $SDK_DIR ]; then
 	wget $SDKURL
 
 	# Decompress them
-	unzip $SDKZIP
+	echo "Decompressing SDKs..."
+	unzip $SDKZIP 1>/dev/null
 
 	cd $PROJECTDIR
 
@@ -31,14 +33,11 @@ fi
 
 # Copy ncurses to project dir for linking
 if ! [ -e $NCURSES_DIR ]; then
-        echo "Found ncurses"
+        echo "ncurses dynamic library cannot be found."
 	exit
 fi
 
 cp -rv $NCURSES_DIR .
-
-cp Makefile Makefile.other
-cp Makefile.ios Makefile
 
 mkdir bin
 mkdir obj
