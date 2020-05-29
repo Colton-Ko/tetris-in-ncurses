@@ -1,3 +1,17 @@
+/*
+
+        DATE
+        2020-05-07
+        
+        FILENAME
+        constants.h
+        
+        VIEW
+                Tabsize:        8
+                Indentation:    Space
+                
+*/
+
 #ifndef CONSTANTS_H
 #define CONSTANTS_H 
 
