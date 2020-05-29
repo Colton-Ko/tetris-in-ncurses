@@ -3,8 +3,7 @@
         Group 140 (2019-2020 2nd Semester)
 
         AUTHOR
-        TAM CHUN KIT            (3035686554)
-        CHOW NAM FUNG           (3035712767)
+        Kolton
 
         DATE
         2020-05-09
