@@ -1,7 +1,4 @@
 /*
-        HKU ENGG 1340 Programming and technologies
-        Group 140 (2019-2020 2nd Semester)
-
         AUTHOR
         Kolton
 
