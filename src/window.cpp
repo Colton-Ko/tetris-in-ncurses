@@ -1,6 +1,4 @@
 /*
-        AUTHOR
-        Kolton
 
         DATE
         2020-05-09
